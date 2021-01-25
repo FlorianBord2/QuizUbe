@@ -22,6 +22,8 @@ class create_quiz:
     def quizGeneration(self):
         self.questionMostView()
         self.questionMostComment()
+        self.questionMostDislike()
+        self.questionMostLike()
 
     #Choose x random video in videoFeed
     def chooseVideos(self, x):
@@ -77,6 +79,49 @@ class create_quiz:
         question['response'] = validResponse
         self.quiz.append(question)
 
+    #Create a Most like question
+    def questionMostLike(self):
+        question = {
+            "type":"mostLike",
+            "title":"La quels de ces videos a le plus de Like ?",
+            "videos":[],
+            "response": 5,
+            "userResponse":"None"
+        }
+        videoChoose = self.chooseVideos(4)
+        i = 0
+        mostLike = 0
+        validResponse = 0
+        while i < 4:
+            if int(self.videoFeed[videoChoose[i]]['like']) > mostLike:
+                validResponse = i
+                mostLike = int(self.videoFeed[videoChoose[i]]['like'])
+            question['videos'].append(self.videoFeed[videoChoose[i]])
+            i = i + 1    
+        question['response'] = validResponse
+        self.quiz.append(question)
+
+    #Create a Most dislike question
+    def questionMostDislike(self):
+        question = {
+            "type":"mostDisike",
+            "title":"La quels de ces videos a le plus de dislike ?",
+            "videos":[],
+            "response": 5,
+            "userResponse":"None"
+        }
+        videoChoose = self.chooseVideos(4)
+        i = 0
+        mostDislike = 0
+        validResponse = 0
+        while i < 4:
+            if int(self.videoFeed[videoChoose[i]]['dislike']) > mostDislike:
+                validResponse = i
+                mostLike = int(self.videoFeed[videoChoose[i]]['dislike'])
+            question['videos'].append(self.videoFeed[videoChoose[i]])
+            i = i + 1    
+        question['response'] = validResponse
+        self.quiz.append(question)
 
 def main():
     cq = create_quiz()
