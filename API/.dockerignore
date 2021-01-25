@@ -1,0 +1,10 @@
+run.sh
+Dockerfile
+.DS_Store
+*.md
+tmp
+.git
+.cache
+*.swp
+.coverage
+__pycache__
