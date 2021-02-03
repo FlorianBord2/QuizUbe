@@ -17,6 +17,7 @@ class fb:
 
         self.firebase = pyrebase.initialize_app(config)
         self.auth = self.firebase.auth()
+        self.db = self.firebase.database()
     
     #User management
 
@@ -69,6 +70,19 @@ class fb:
             return error
 
     #Data management
+
+    def save_quiz(self, data):
+        print(data['userLocalId'])
+        quiz_histo = {
+            'date': data['date'],
+            'time': data['time'],
+            'uuid': data['uuid'],
+            'userScore':data['userScore'],
+            'nbQuestion': data['nbQuestion']
+            }
+        self.db.child(data['userLocalId']).child('quizHisto').push(quiz_histo)
+        self.db.child(data['userLocalId']).child('quiz').child(data['uuid']).set(data['quiz'])
+
 
 def main():
     firebase =fb()

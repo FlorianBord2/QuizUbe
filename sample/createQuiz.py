@@ -1,6 +1,9 @@
 from ourYoutube import yapi
 import json
 from random import randrange
+from datetime import datetime
+import time
+import uuid
 
 class create_quiz:
 
@@ -8,7 +11,16 @@ class create_quiz:
 
         self.youtubeApi = yapi()
         self.videoFeed = []
-        self.quiz = []
+        now = datetime.now()
+        self.quiz = {
+            "userLocalId": "userLocalId",
+            "date": now.strftime("%d/%m/%Y %H:%M:%S"),
+            "time": time.time(),
+            "uuid":str(uuid.uuid1()),
+            "userScore":0,
+            "nbQuestion":0,
+            "quiz":[]
+        }
 
     def getVideoFeed(self, channelId):
          self.videoFeed = self.youtubeApi.yotube_getvideofeed(channelId)
@@ -16,6 +28,7 @@ class create_quiz:
     def create(self, channelId):
         self.getVideoFeed(channelId)
         self.quizGeneration()
+        self.quiz['nbQuestion'] = len(self.quiz['quiz'])
         res = json.dumps(self.quiz)
         return res
 
@@ -39,7 +52,6 @@ class create_quiz:
     def questionMostView(self):
         question = {
             "type":"mostViewed",
-            "title":"La quels de ces videos a le plus de vue ?",
             "videos":[],
             "response": 5,
             "userResponse":"None"
@@ -55,13 +67,12 @@ class create_quiz:
             question['videos'].append(self.videoFeed[videoChoose[i]])
             i = i + 1    
         question['response'] = validResponse
-        self.quiz.append(question)
+        self.quiz['quiz'].append(question)
     
     #Create a Most commented question
     def questionMostComment(self):
         question = {
             "type":"mostComment",
-            "title":"La quels de ces videos a le plus de commentaires ?",
             "videos":[],
             "response": 5,
             "userResponse":"None"
@@ -77,13 +88,12 @@ class create_quiz:
             question['videos'].append(self.videoFeed[videoChoose[i]])
             i = i + 1    
         question['response'] = validResponse
-        self.quiz.append(question)
+        self.quiz['quiz'].append(question)
 
     #Create a Most like question
     def questionMostLike(self):
         question = {
             "type":"mostLike",
-            "title":"La quels de ces videos a le plus de Like ?",
             "videos":[],
             "response": 5,
             "userResponse":"None"
@@ -99,13 +109,12 @@ class create_quiz:
             question['videos'].append(self.videoFeed[videoChoose[i]])
             i = i + 1    
         question['response'] = validResponse
-        self.quiz.append(question)
+        self.quiz['quiz'].append(question)
 
     #Create a Most dislike question
     def questionMostDislike(self):
         question = {
             "type":"mostDisike",
-            "title":"La quels de ces videos a le plus de dislike ?",
             "videos":[],
             "response": 5,
             "userResponse":"None"
@@ -121,7 +130,7 @@ class create_quiz:
             question['videos'].append(self.videoFeed[videoChoose[i]])
             i = i + 1    
         question['response'] = validResponse
-        self.quiz.append(question)
+        self.quiz['quiz'].append(question)
 
 def main():
     cq = create_quiz()

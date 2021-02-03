@@ -31,6 +31,19 @@ def get_quiz():
     else:
         return 'Wrong method'
 
+@app.route('/save_quiz', methods=['POST'])
+def save_quiz():
+    if request.method == 'POST':
+        try:
+            quiz = request.json
+            fb.save_quiz(quiz)
+            return 'ok'
+        except:
+            return Response('Error', status=400, mimetype='application/json')
+    else:
+        return 'Wrong method'
+
+
 #Gestion des users
 
 @app.route('/users/register')
