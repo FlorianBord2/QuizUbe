@@ -83,6 +83,7 @@ class fb:
         self.db.child(data['userLocalId']).child('quizHisto').push(quiz_histo)
         self.db.child(data['userLocalId']).child('quiz').child(data['uuid']).set(data['quiz'])
 
+#test main
 
 def main():
     firebase =fb()
