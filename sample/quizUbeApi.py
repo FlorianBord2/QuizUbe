@@ -14,7 +14,7 @@ yapi = ya()
 fb = fbapi()
 
 
-@app.route('/search_channel', methods=['GET'])
+@app.route('/quiz/search_channel', methods=['GET'])
 def search_channel():
     if request.method == 'GET':
         res = yapi.youtube_search_channel(request.args['q'])
@@ -23,15 +23,15 @@ def search_channel():
     else:  
         return 'Wrong method'
 
-@app.route('/get_quiz', methods=['GET'])
-def get_quiz():
+@app.route('/quiz/create_quiz', methods=['GET'])
+def create_quiz():
     if request.method == 'GET':
         res = cq.create(request.args['channelId'])
         return res
     else:
         return 'Wrong method'
 
-@app.route('/save_quiz', methods=['POST'])
+@app.route('/quiz/save_quiz', methods=['POST'])
 def save_quiz():
     if request.method == 'POST':
         try:
@@ -43,6 +43,27 @@ def save_quiz():
     else:
         return 'Wrong method'
 
+@app.route('/quiz/get_quiz_histo', methods=['GET'])
+def get_quiz_histo():
+    if request.method == 'GET':
+        try:
+            userLocalId = request.headers['userLocalId']
+            return fb.get_quiz_histo(userLocalId)   
+        except:
+            return Response('Bad parameter, make sure you have "userLocalId" param in your header', status=400, mimetype='application/json')
+    else:
+        return 'Wrong method'
+
+@app.route('/quiz/get_quiz', methods=['GET'])
+def get_quiz():
+    if request.method == 'GET':
+        quizuid = request.headers['quizUuid']
+        userLocalId = request.headers['userLocalId']
+        return fb.get_quiz(quizuid, userLocalId)
+        # except:
+        #     return Response('Bad parameter, make sure you have "quizUuid" and "userLocalId" param in your header', status=400, mimetype='application/json')
+    else:
+        return 'Wrong method'
 
 #Gestion des users
 

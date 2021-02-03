@@ -83,6 +83,13 @@ class fb:
         self.db.child(data['userLocalId']).child('quizHisto').push(quiz_histo)
         self.db.child(data['userLocalId']).child('quiz').child(data['uuid']).set(data['quiz'])
 
+    def get_quiz_histo(self, userLocalId):
+        return self.db.child(userLocalId).child('quizHisto').get().val()
+    
+    def get_quiz(self, quizUuid, userLocalId):
+        res = {"quiz":self.db.child(userLocalId).child('quiz').child(quizUuid).get().val()}
+        return res
+
 #test main
 
 def main():
