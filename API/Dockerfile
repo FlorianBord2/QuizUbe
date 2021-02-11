@@ -7,5 +7,4 @@ ENV STATIC_PATH ./app/static
 
 EXPOSE 65000
 
-RUN python3 -m pip install --upgrade pip && \
-python3 -m pip install -r requirements.txt
+RUN python3 -m pip install --upgrade pip

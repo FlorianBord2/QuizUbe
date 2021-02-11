@@ -15,10 +15,8 @@ services:
       dockerfile: Dockerfile
 
   api:
-    depends_on: 
-      - firebase
     container_name: api
-    command: /bin/bash
+    command: sh -c "python3 -m pip install -r requirements.txt && /bin/bash"
     tty: true
     stdin_open: true
     build:
@@ -27,4 +25,5 @@ services:
     volumes: 
       - "./API:/api"
     ports:
-      - "65000:80"
+      - "65000:65000"
+      - "80:80"
