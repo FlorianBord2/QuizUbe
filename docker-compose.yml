@@ -1,29 +1,14 @@
 version: "3.9"
 
 services:
-  firebase:
-    container_name: db
-    command: /bin/bash
-    tty: true
-    stdin_open: true
-    ports:
-      - "9005:9005"
-      - "9000:80"
-      - "4000:80"
-    build:
-      context: ./Database
-      dockerfile: Dockerfile
-
   api:
+    build: ./API
     container_name: api
-    command: sh -c "python3 -m pip install -r requirements.txt && /bin/bash"
     tty: true
     stdin_open: true
-    build:
-      context: ./API/
-      dockerfile: Dockerfile
     volumes: 
-      - "./API:/api"
+        - "./API:/app/api"
+        - "./Database:/app/db"
     ports:
-      - "65000:65000"
-      - "80:80"
+        - "65000:65000"
+        - "80:80"

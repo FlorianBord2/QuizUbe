@@ -23,7 +23,7 @@ class create_quiz:
         }
 
     def getVideoFeed(self, channelId):
-         self.videoFeed = self.youtubeApi.yotube_getvideofeed(channelId)
+         self.videoFeed = self.youtubeApi.youtube_getvideofeed(channelId)
 
     def create(self, channelId):
         self.getVideoFeed(channelId)

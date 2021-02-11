@@ -1,10 +1,15 @@
-FROM tiangolo/meinheld-gunicorn-flask:python3.8
-
-WORKDIR /api
-
-ENV STATIC_URL /static
-ENV STATIC_PATH ./app/static
+FROM python:3.8-slim
 
 EXPOSE 65000
+EXPOSE 90
 
-RUN python3 -m pip install --upgrade pip
+WORKDIR /requirements
+
+COPY requirements.txt /requirements
+
+RUN python3 -m pip install --upgrade pip && \
+python3 -m pip install -r requirements.txt 
+
+WORKDIR /app
+
+ENTRYPOINT [ "/bin/bash" ]
