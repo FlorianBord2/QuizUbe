@@ -6,7 +6,7 @@ from flask import request
 from flask import Response
 from createQuiz import create_quiz
 from ourYoutube import yapi as ya
-from firebase import fb as fbapi
+from firebase import Firebase as fb
 
 import json
 
@@ -14,8 +14,6 @@ app = Flask(__name__)
 
 cq = create_quiz()
 yapi = ya()
-fb = fbapi()
-
 
 @app.route('/quiz/search_channel', methods=['GET'])
 def search_channel():
