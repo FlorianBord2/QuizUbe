@@ -8,8 +8,8 @@ services:
     tty: true
     stdin_open: true
     volumes: 
-        - "./API:/app/API"
-        - "./Database:/app/Database"
+        - "./API:/app/API:z"
+        - "./Database:/app/Database:z"
     ports:
         - "65000:65000"
         - "80:80"
