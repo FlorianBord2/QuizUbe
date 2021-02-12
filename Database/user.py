@@ -8,18 +8,10 @@ class User:
 	def __init__(self, email, password):
 		self.email = email
 		self.password = password
-		self.id_token = ""
-		self.refresh_token = ""
 		self.first_name = ""
 		self.last_name = ""
 		self.username = ""
 		self.picture = ""
-
-	def get_id_token(self):
-		return self.id_token
-	
-	def get_refresh_token(self):
-		return self.refresh_token
 
 	def register(self, auth):
 		try:
@@ -44,5 +36,12 @@ class User:
 			print("Can't reset password: {}".format(e), sys.stderr)
 			return fb.http_error(e)
 	
-	def toJSON(self):
+	def save_email(self, email):
+		self.email = email
+	
+	def save_password(self, password):
+		self.password = password
+	
+	@staticmethod
+	def to_json(self):
 		return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)

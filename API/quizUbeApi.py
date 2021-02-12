@@ -1,15 +1,12 @@
 import sys
+import json
 sys.path.insert(1, '../Database')
 
-from flask import Flask
-from flask import request
-from flask import Response
+from flask import Flask, request, Response
 from createQuiz import create_quiz
 from ourYoutube import yapi as ya
 from firebase import Firebase as fb
 from user import User as ue
-
-import json
 
 app = Flask(__name__)
 
@@ -80,7 +77,7 @@ def register():
             email = request.headers['email']    
         except:
             return Response('Bad parameter, make sure you have "password" and "email" param in your header', status=400, mimetype='application/json')
-        user = ue(request.headers['email'], request.headers['password'])
+        user = ue(email, password)
         return user.register(auth)
     else:
         return 'Wrong method'
@@ -93,7 +90,7 @@ def login():
             email = request.headers['email']    
         except:
             return Response('Bad parameter, make sure you have "password" and "email" param in your header', status=400, mimetype='application/json')
-        user = ue(request.headers['email'], request.headers['password'])
+        user = ue(email, password)
         return user.login(auth)
     else:
         return 'Wrong method'
@@ -105,7 +102,7 @@ def reset_password():
             email = request.headers['email']    
         except:
             return Response('Bad parameter, make sure you have "email" param in your header', status=400, mimetype='application/json')
-        user = ue(request.headers['email'], '*********')
+        user = ue(email, '*********')
         return user.reset_password(auth)
     else:
         return 'Wrong method'

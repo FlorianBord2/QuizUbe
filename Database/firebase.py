@@ -5,7 +5,6 @@ import sys
 
 class Firebase:
     def __init__(self):
-        self.running = True
         config = {
             "apiKey": "AIzaSyAY123nmo2Yfa5D4JUsqkIMMZQixL8c_5o",
             "authDomain": "quizube.firebaseapp.com",
@@ -19,6 +18,7 @@ class Firebase:
             self.firebase = pyrebase.initialize_app(config)
             self.auth = self.firebase.auth()
             self.db = self.firebase.database()
+            self.running = True
         except Exception as e:
             self.running = e
 
@@ -47,7 +47,6 @@ class Firebase:
         try:
             return self.auth.send_email_verification(user_id_token)
         except requests.exceptions.HTTPError as e:
-            self.userIdToken = ""
             print("Can't verify email address: {}".format(e), sys.stderr)
             return self.http_error(e)
 
@@ -62,7 +61,6 @@ class Firebase:
         try:
             return self.auth.refresh(refresh_token)
         except requests.exceptions.HTTPError as e:
-            refresh_token = ""
             print("Can't verify email address: {}".format(e), sys.stderr)
             return self.http_error(e)
 
