@@ -3,12 +3,13 @@ version: "3.9"
 services:
   api:
     build: ./API
+    user: root
     container_name: api
     tty: true
     stdin_open: true
     volumes: 
-        - "./API:/app/api"
-        - "./Database:/app/db"
+        - "./API:/app/API"
+        - "./Database:/app/Database"
     ports:
         - "65000:65000"
         - "80:80"

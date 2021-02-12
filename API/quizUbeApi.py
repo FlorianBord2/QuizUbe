@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(1, '../db')
+sys.path.insert(1, '../Database')
 
 from flask import Flask
 from flask import request
