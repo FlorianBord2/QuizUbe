@@ -7,6 +7,7 @@ from flask import Response
 from createQuiz import create_quiz
 from ourYoutube import yapi as ya
 from firebase import Firebase as fb
+from user import User as ue
 
 import json
 
@@ -14,6 +15,9 @@ app = Flask(__name__)
 
 cq = create_quiz()
 yapi = ya()
+f = fb()
+f.is_running()
+auth = f.get_auth()
 
 @app.route('/quiz/search_channel', methods=['GET'])
 def search_channel():
@@ -76,9 +80,8 @@ def register():
             email = request.headers['email']    
         except:
             return Response('Bad parameter, make sure you have "password" and "email" param in your header', status=400, mimetype='application/json')
-        password = request.headers['password']
-        email = request.headers['email']
-        return fb.register(email, password)
+        user = ue(request.headers['email'], request.headers['password'])
+        return user.register(auth)
     else:
         return 'Wrong method'
 
@@ -90,9 +93,8 @@ def login():
             email = request.headers['email']    
         except:
             return Response('Bad parameter, make sure you have "password" and "email" param in your header', status=400, mimetype='application/json')
-        password = request.headers['password']
-        email = request.headers['email']
-        return fb.login(email, password)
+        user = ue(request.headers['email'], request.headers['password'])
+        return user.login(auth)
     else:
         return 'Wrong method'
 
@@ -103,8 +105,8 @@ def reset_password():
             email = request.headers['email']    
         except:
             return Response('Bad parameter, make sure you have "email" param in your header', status=400, mimetype='application/json')
-        email = request.headers['email']
-        return fb.reset_password(email)
+        user = ue(request.headers['email'], '*********')
+        return user.reset_password(auth)
     else:
         return 'Wrong method'
 
@@ -115,8 +117,7 @@ def verify_mail():
             userIdToken = request.headers['userIdToken']    
         except:
             return Response('Bad parameter, make sure you have "userIdToken" param in your header', status=400, mimetype='application/json')
-        userIdToken = request.headers['userIdToken']
-        return fb.verify_mail(userIdToken)
+        return f.verify_email(userIdToken)
     else:
         return 'Wrong method'
 
@@ -128,7 +129,7 @@ def get_account_info():
         except:
             return Response('Bad parameter, make sure you have "userIdToken" param in your header', status=400, mimetype='application/json')
         userIdToken = request.headers['userIdToken']
-        return fb.get_account_info(userIdToken)
+        return f.get_user_info(userIdToken)
     else:
         return 'Wrong method'
     
@@ -140,6 +141,6 @@ def refresh_token():
         except:
             return Response('Bad parameter, make sure you have "refreshToken" param in your header', status=400, mimetype='application/json')
         refreshToken = request.headers['refreshToken']
-        return fb.refresh_token(refreshToken)
+        return f.refresh_token(refreshToken)
     else:
         return 'Wrong method'

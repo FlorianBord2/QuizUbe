@@ -32,6 +32,7 @@ class User:
 		try:
 			login = auth.sign_in_with_email_and_password(self.email, self.password)
 			self.id_token = login['idToken']
+			return login
 		except requests.exceptions.HTTPError as e:
 			print("Can't log in: {}".format(e), sys.stderr)
 			return fb.http_error(e)
@@ -42,3 +43,6 @@ class User:
 		except requests.exceptions.HTTPError as e:
 			print("Can't reset password: {}".format(e), sys.stderr)
 			return fb.http_error(e)
+	
+	def toJSON(self):
+		return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)

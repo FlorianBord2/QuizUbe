@@ -43,8 +43,7 @@ class Firebase:
 
     # User tools
 
-    def verify_email(self, user):
-        user_id_token = user.get_id_token()
+    def verify_email(self, user_id_token):
         try:
             return self.auth.send_email_verification(user_id_token)
         except requests.exceptions.HTTPError as e:
@@ -52,16 +51,14 @@ class Firebase:
             print("Can't verify email address: {}".format(e), sys.stderr)
             return self.http_error(e)
 
-    def get_user_info(self, user):
-        user_id_token = user.get_id_token()
+    def get_user_info(self, user_id_token):
         try:
             return self.auth.get_account_info(user_id_token)
         except requests.exceptions.HTTPError as e:
             print("Can't retrieve acccount info: {}".format(e), sys.stderr)
             return self.http_error(e)
     
-    def refresh_token(self, user):
-        refresh_token = user.get_refresh_token()
+    def refresh_token(self, refresh_token):
         try:
             return self.auth.refresh(refresh_token)
         except requests.exceptions.HTTPError as e:
