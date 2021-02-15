@@ -1,12 +1,15 @@
 import sys
-import json
 sys.path.insert(1, '../Database')
 
-from flask import Flask, request, Response
+from flask import Flask
+from flask import request
+from flask import Response
 from createQuiz import create_quiz
 from ourYoutube import yapi as ya
 from firebase import Firebase as fb
 from user import User as ue
+
+import json
 
 app = Flask(__name__)
 
@@ -38,7 +41,7 @@ def save_quiz():
     if request.method == 'POST':
         try:
             quiz = request.json
-            fb.save_quiz(quiz)
+            f.save_quiz(quiz)
             return 'ok'
         except:
             return Response('Error', status=400, mimetype='application/json')
@@ -50,7 +53,7 @@ def get_quiz_histo():
     if request.method == 'GET':
         try:
             userLocalId = request.headers['userLocalId']
-            return fb.get_quiz_histo(userLocalId)   
+            return f.get_quiz_histo(userLocalId)   
         except:
             return Response('Bad parameter, make sure you have "userLocalId" param in your header', status=400, mimetype='application/json')
     else:
@@ -61,7 +64,7 @@ def get_quiz():
     if request.method == 'GET':
         quizuid = request.headers['quizUuid']
         userLocalId = request.headers['userLocalId']
-        return fb.get_quiz(quizuid, userLocalId)
+        return f.get_quiz(quizuid, userLocalId)
         # except:
         #     return Response('Bad parameter, make sure you have "quizUuid" and "userLocalId" param in your header', status=400, mimetype='application/json')
     else:
@@ -77,7 +80,7 @@ def register():
             email = request.headers['email']    
         except:
             return Response('Bad parameter, make sure you have "password" and "email" param in your header', status=400, mimetype='application/json')
-        user = ue(email, password)
+        user = ue(request.headers['email'], request.headers['password'])
         return user.register(auth)
     else:
         return 'Wrong method'
@@ -90,7 +93,7 @@ def login():
             email = request.headers['email']    
         except:
             return Response('Bad parameter, make sure you have "password" and "email" param in your header', status=400, mimetype='application/json')
-        user = ue(email, password)
+        user = ue(request.headers['email'], request.headers['password'])
         return user.login(auth)
     else:
         return 'Wrong method'
@@ -102,7 +105,7 @@ def reset_password():
             email = request.headers['email']    
         except:
             return Response('Bad parameter, make sure you have "email" param in your header', status=400, mimetype='application/json')
-        user = ue(email, '*********')
+        user = ue(request.headers['email'], '*********')
         return user.reset_password(auth)
     else:
         return 'Wrong method'
