@@ -1,30 +1,15 @@
 version: "3.9"
 
 services:
-  firebase:
-    container_name: db
-    command: /bin/bash
-    tty: true
-    stdin_open: true
-    ports:
-      - "9005:9005"
-      - "9000:80"
-      - "4000:80"
-    build:
-      context: ./Database
-      dockerfile: Dockerfile
-
   api:
-    depends_on: 
-      - firebase
+    build: ./API
+    user: root
     container_name: api
-    command: /bin/bash
     tty: true
     stdin_open: true
-    build:
-      context: ./API/
-      dockerfile: Dockerfile
     volumes: 
-      - "./API:/api"
+        - "./API:/app/API:z"
+        - "./Database:/app/Database:z"
     ports:
-      - "65000:80"
+        - "65000:65000"
+        - "80:80"

@@ -17,7 +17,7 @@ class yapi:
 
         self.youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
 
-    def yotube_getvideofeed(self, channelID):
+    def youtube_getvideofeed(self, channelID):
 
         search_response = self.youtube.search().list(
             q=options.q,
@@ -76,8 +76,6 @@ class yapi:
 
 def main():
     api = yapi()
-
-    
 
     print(api.youtube_search_channel('Clippex rotmg'))
     #print(api.yotube_getvideofeed('UCpLfaNS0J7iPLZhZ_5t8hCA'))
