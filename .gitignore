@@ -386,3 +386,6 @@ MigrationBackup/
 .ionide/
 
 venv/
+Lib/
+Scripts/
+pyvenv.cfg
