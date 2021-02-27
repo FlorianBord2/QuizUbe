@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Quiz
 {
-	public class QuizQuestion
+	public class Question
 	{
 		/// <summary>
 		/// Good answer
 		/// </summary>
-		public int Response;
+		public string Response;
 
 		public string Title;
 		public string Type;
@@ -17,12 +17,12 @@ public class Quiz
 		/// <summary>
 		/// ??????????????
 		/// </summary>
-		public int UserResponse;
+		public string UserResponse;
 
-		public QuizVideo[] Videos;
+		public Video[] Videos;
 	}
 
-	public class QuizVideo
+	public class Video
 	{
 		/// <summary>
 		/// Amount of comments
@@ -54,6 +54,12 @@ public class Quiz
 		public ulong View;
 	}
 
-	public QuizQuestion[] Questions;
+	public Question[] Questions;
+	
+	public Quiz(Question[] questions)
+	{
+		Questions = questions;
+	}
 }
+
 

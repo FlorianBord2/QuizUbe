@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -12,9 +13,10 @@ public class QuizPage : Page
 	{
 		string data = WebUtility.Instance.Get(CREATE_QUIZ_URL + value);
 
-        StringReader reader = new StringReader(data);
-        JsonSerializer ser = JsonSerializer.Create(new JsonSerializerSettings());
-        Quiz quiz = (Quiz)ser.Deserialize(reader, typeof(Quiz));
-        
+		JObject obj = JObject.Parse(data);
+		JToken jQuiz = obj["quiz"];
+
+		Quiz.Question[] quizQuestions = jQuiz.ToObject < Quiz.Question[]>();
+		Quiz quiz = new Quiz(quizQuestions);
     }
 }
