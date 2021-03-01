@@ -40,10 +40,10 @@ public class SearchPage : Page
 
             cr.onClick += OnResultClicked;
 
-            StartCoroutine(WebUtility.Instance.GetTexture(crd.URL, (texture) =>
+            WebUtility.Instance.GetTextureAsync(crd.URL, (texture) =>
             {
                 cr.ChannelPic.sprite = Sprite.Create((Texture2D)texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
-            }));
+            });
 
             _results.Add(cr);
         }
