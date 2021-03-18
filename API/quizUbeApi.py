@@ -4,7 +4,7 @@ sys.path.insert(1, '../Database')
 from flask import Flask
 from flask import request
 from flask import Response
-from createQuiz import create_quiz
+from createQuiz import create_quiz as create_quiz_class
 from ourYoutube import yapi as ya
 from firebase import Firebase as fb
 from user import User as ue
@@ -13,7 +13,7 @@ import json
 
 app = Flask(__name__)
 
-cq = create_quiz()
+
 yapi = ya()
 f = fb()
 f.is_running()
@@ -31,6 +31,7 @@ def search_channel():
 @app.route('/quiz/create_quiz', methods=['GET'])
 def create_quiz():
     if request.method == 'GET':
+        cq = create_quiz_class()
         res = cq.create(request.args['channelId'])
         return res
     else:

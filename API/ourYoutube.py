@@ -61,7 +61,9 @@ class yapi:
 
         channel = []
 
+
         for search_result in search_response.get('items', []):
+            print(search_result)
             if search_result['id']['kind'] == 'youtube#channel':
                 chan={}
                 chan['title'] = search_result['snippet']['title']
