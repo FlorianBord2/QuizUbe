@@ -4,6 +4,7 @@ from random import randrange
 from datetime import datetime
 import time
 import uuid
+from os import listdir
 
 class create_quiz:
 
@@ -11,6 +12,8 @@ class create_quiz:
 
         self.youtubeApi = yapi()
         self.videoFeed = []
+        self.QuestionType = {}
+        self.QuestionTypePath = "./questionType/"
         now = datetime.now()
         self.quiz = {
             "userLocalId": "userLocalId",
@@ -33,10 +36,34 @@ class create_quiz:
         return res
 
     def quizGeneration(self):
-        self.questionMostView()
-        self.questionMostComment()
-        self.questionMostDislike()
-        self.questionMostLike()
+        self.getQuestionType()
+        print(self.questionType["ML"])
+        i = 0
+        while i < self.questionType["MV"]:
+            self.questionMostView()
+            i = i + 1
+        i = 0
+        while i < self.questionType["MC"]:
+            self.questionMostComment()
+            i = i + 1
+        i = 0
+        while i < self.questionType["MD"]:
+            self.questionMostDislike()
+            i = i + 1
+        i = 0
+        while i < self.questionType["ML"]:
+            self.questionMostLike()
+            i = i + 1
+    
+    def getQuestionType(self):
+        questionsType = listdir(self.QuestionTypePath)
+        nbQuestionType = len(questionsType)
+        chosenType = randrange(nbQuestionType)
+        print("Chosen question type =", chosenType)
+        f = open(self.QuestionTypePath + questionsType[chosenType], 'r')
+        content = f.read()
+        f.close()
+        self.questionType = json.loads(content)
 
     #Choose x random video in videoFeed
     def chooseVideos(self, x):
