@@ -76,13 +76,22 @@ def get_quiz():
 @app.route('/users/register')
 def register():
     if request.method == 'GET':
-        try:
-            password = request.headers['password']
-            email = request.headers['email']    
-        except:
-            return Response('Bad parameter, make sure you have "password" and "email" param in your header', status=400, mimetype='application/json')
+        #try:
+        password = request.headers['password']
+        email = request.headers['email']
+        username = request.headers['username']
+        if f.chekc_username(username) == 'ok':
+            dispo = True
+        else:
+            return Response('username taken', status=400, mimetype='application/json')
         user = ue(request.headers['email'], request.headers['password'])
-        return user.register(auth)
+        res = user.register(auth)
+        print(res)
+        try:
+            f.db.child("users").child(username).set(res['localId'])
+        except:
+            return res
+        return res
     else:
         return 'Wrong method'
 
@@ -143,5 +152,56 @@ def refresh_token():
             return Response('Bad parameter, make sure you have "refreshToken" param in your header', status=400, mimetype='application/json')
         refreshToken = request.headers['refreshToken']
         return f.refresh_token(refreshToken)
+    else:
+        return 'Wrong method'
+
+@app.route('/users/add_friend')
+def add_friend():
+    if request.method == 'GET':
+        try:
+            userIdToken = request.headers['userIdToken']
+            friend_name = request.headers['friend_username']    
+        except:
+            return Response('Bad parameter, make sure you have "userIdToken" and "friend_username" param in your header', status=400, mimetype='application/json')
+        return f.addFriend(userIdToken, friend_name)
+    else:
+        return 'Wrong method'
+
+@app.route('/users/accept_friend')
+def accept_friend():
+    if request.method == 'GET':
+        try:
+            userIdToken = request.headers['userIdToken']
+            friend_name = request.headers['friend_username']    
+        except:
+            return Response('Bad parameter, make sure you have "userIdToken" and "friend_username" param in your header', status=400, mimetype='application/json')
+        return f.acceptFriend(userIdToken, friend_name)
+    else:
+        return 'Wrong method'
+
+@app.route('/users/refuse_friend')
+def accept_friend():
+    if request.method == 'GET':
+        try:
+            userIdToken = request.headers['userIdToken']
+            friend_name = request.headers['friend_username']    
+        except:
+            return Response('Bad parameter, make sure you have "userIdToken" and "friend_username" param in your header', status=400, mimetype='application/json')
+        return f.refuseFriend(userIdToken, friend_name)
+    else:
+        return 'Wrong method'
+
+@app.route('/users/get_pending_list')
+def get_pending_list():
+    if request.method == 'GET':
+        try:
+            userIdToken = request.headers['userIdToken']
+        except:
+            return Response('Bad parameter, make sure you have "userIdToken" param in your header', status=400, mimetype='application/json')
+        res = f.getPendingList(userIdToken)
+        if res == None:
+            return Response('{}', status=200, mimetype='application/json')
+        else:
+            return res
     else:
         return 'Wrong method'

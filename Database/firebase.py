@@ -43,6 +43,14 @@ class Firebase:
 
     # User tools
 
+    def chekc_username(self, username):
+        users = self.db.child("users").child(username).get().val()
+        print(users)
+        if users == None:
+            return 'ok'
+        else:
+            return "taken"
+
     def verify_email(self, user_id_token):
         try:
             return self.auth.send_email_verification(user_id_token)
@@ -65,6 +73,45 @@ class Firebase:
             refresh_token = ""
             print("Can't verify email address: {}".format(e), sys.stderr)
             return self.http_error(e)
+
+    def addFriend(self, userIdToken, friendUsername):
+        f_idToken = self.db.child("users").child(friendUsername).get().val()
+        print(f_idToken)
+        if (f_idToken == None):
+            return ("User not found")
+        users = self.db.child('users').get()
+        username = None
+        for user in users.each ():
+            if user.val() == userIdToken:
+                username = user.key()
+        print(username)
+        self.db.child(f_idToken).child('pending_friend').child(username).set(userIdToken)
+        return 'invite send'
+
+    def acceptFriend(self, userIdToken, friendUsername):
+        f_idToken = self.db.child(userIdToken).child('pending_friend').child(friendUsername).get().val()
+        if (f_idToken == None):
+            return('')
+        self.db.child(userIdToken).child('pending_friend').child(friendUsername).remove()
+        self.db.child(userIdToken).child('friends').child(friendUsername).set(f_idToken)
+        users = self.db.child('users').get()
+        username = None
+        for user in users.each ():
+            if user.val() == userIdToken:
+                username = user.key()
+        self.db.child(f_idToken).child('friends').child(username).set(userIdToken)
+        return 'Friend added'
+    
+    def refuseFriend(self, userIdToken, friendUsername):
+        f_idToken = self.db.child(userIdToken).child('pending_friend').child(friendUsername).get().val()
+        if (f_idToken == None):
+            return('')
+        self.db.child(userIdToken).child('pending_friend').child(friendUsername).remove()
+        return 'Friend refuse'
+    
+    def getPendingList(self, userIdToken):
+        plist  = self.db.child(userIdToken).child('pending_friend').get().val()
+        return plist
 
     #Data management
 

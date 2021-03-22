@@ -15,7 +15,8 @@ class User:
 
 	def register(self, auth):
 		try:
-			return auth.create_user_with_email_and_password(self.email, self.password)
+			res = auth.create_user_with_email_and_password(self.email, self.password)
+			return res
 		except requests.exceptions.HTTPError as e:
 			print("Can't register: {}".format(e), sys.stderr)
 			return fb.http_error(e)
