@@ -40,12 +40,12 @@ def create_quiz():
 @app.route('/quiz/save_quiz', methods=['POST'])
 def save_quiz():
     if request.method == 'POST':
-        try:
-            quiz = request.json
-            f.save_quiz(quiz)
-            return 'ok'
-        except:
-            return Response('Error', status=400, mimetype='application/json')
+        #try:
+        quiz = request.json
+        f.save_quiz(quiz)
+        return 'ok'
+        #except:
+        #    return Response('Error', status=400, mimetype='application/json')
     else:
         return 'Wrong method'
 
@@ -76,18 +76,17 @@ def get_quiz():
 @app.route('/users/register')
 def register():
     if request.method == 'GET':
-        #try:
-        password = request.headers['password']
-        email = request.headers['email']
-        username = request.headers['username']
-        if f.chekc_username(username) == 'ok':
-            dispo = True
-        else:
-            return Response('username taken', status=400, mimetype='application/json')
-        user = ue(request.headers['email'], request.headers['password'])
-        res = user.register(auth)
-        print(res)
         try:
+            password = request.headers['password']
+            email = request.headers['email']
+            username = request.headers['username']
+            if f.chekc_username(username) == 'ok':
+                dispo = True
+            else:
+                return Response('username taken', status=400, mimetype='application/json')
+            user = ue(request.headers['email'], request.headers['password'])
+            res = user.register(auth)
+            print(res)
             f.db.child("users").child(username).set(res['localId'])
         except:
             return res
@@ -180,7 +179,7 @@ def accept_friend():
         return 'Wrong method'
 
 @app.route('/users/refuse_friend')
-def accept_friend():
+def refuse_friend():
     if request.method == 'GET':
         try:
             userIdToken = request.headers['userIdToken']
@@ -199,6 +198,17 @@ def get_pending_list():
         except:
             return Response('Bad parameter, make sure you have "userIdToken" param in your header', status=400, mimetype='application/json')
         res = f.getPendingList(userIdToken)
+        if res == None:
+            return Response('{}', status=200, mimetype='application/json')
+        else:
+            return res
+    else:
+        return 'Wrong method'
+
+@app.route('/users/leadersboard')
+def get_leaders():
+    if request.method == 'GET':
+        res = f.getLeaders()
         if res == None:
             return Response('{}', status=200, mimetype='application/json')
         else:

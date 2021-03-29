@@ -3,6 +3,11 @@ import requests
 import json
 import sys
 
+def noquote(s):
+    return s
+pyrebase.pyrebase.quote = noquote
+
+
 class Firebase:
     def __init__(self):
         self.running = True
@@ -126,6 +131,32 @@ class Firebase:
             }
         self.db.child(data['userLocalId']).child('quizHisto').push(quiz_histo)
         self.db.child(data['userLocalId']).child('quiz').child(data['uuid']).set(data['quiz'])
+        #SaveStats
+        self.saveStats(data['userLocalId'], data['userScore'])
+
+    def saveStats(self, userLocalId, userScore):
+        users = self.db.child('users').get()
+        username = None
+        for user in users.each ():
+            if user.val() == userLocalId:
+                username = user.key()
+        score = self.db.child("score").child(username).get().val()
+        if score == None:
+            self.db.child("score").child(username).set(userScore)
+        else:
+            self.db.child("score").child(username).set(userScore + score)
+        
+        nbQuiz = self.db.child("nb_quiz").child(username).get().val()
+        if nbQuiz == None:
+            self.db.child("nb_quiz").child(username).set(1)
+        else:
+            self.db.child("nb_quiz").child(username).set(nbQuiz + 1)
+    
+    def getLeaders(self):
+        score = self.db.child("score").order_by_value().get().val()
+        quiz = self.db.child("nb_quiz").order_by_value().get().val()
+        res = {"score" : score, "quiz" : quiz}
+        return res
 
     def get_quiz_histo(self, userLocalId):
         return self.db.child(userLocalId).child('quizHisto').get().val()
