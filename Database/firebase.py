@@ -80,11 +80,17 @@ class Firebase:
             return self.http_error(e)
 
     def friendList(self, userIdToken):
-        friends = self.db.child(userIdToken).child('friends').get().val()
-        print(friends)
-        if (friends == None):
-            return '{}'
-        return friends
+        plist = self.db.child(userIdToken).child('friends').get().val()
+        if plist == None:
+            return {}
+        users = []
+        myformat = {"name" : "",
+            "userIdToken": ""}
+        for each in plist:
+            myformat['name'] = each
+            myformat['userIdToken'] = plist[each]
+            users.append(myformat)
+        return json.dumps(users)
 
     def addFriend(self, userIdToken, friendUsername):
         f_idToken = self.db.child("users").child(friendUsername).get().val()
@@ -123,13 +129,10 @@ class Firebase:
     
     def getPendingList(self, userIdToken):
         plist  = self.db.child(userIdToken).child('pending_friend').get().val()
-        print (plist)
         users = []
         myformat = {"name" : "",
             "userIdToken": ""}
         for each in plist:
-            print(each)
-            print(plist[each])
             myformat['name'] = each
             myformat['userIdToken'] = plist[each]
             users.append(myformat)
