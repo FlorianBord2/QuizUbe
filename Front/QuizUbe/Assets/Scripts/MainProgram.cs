@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class MainProgram : MonoBehaviour
 {
+	private static MainProgram _instance;
+	public static MainProgram Instance => _instance;
+
+
 	public Page LoginPage;
 	public Page MainPage;
 	public Page SearchPage;
@@ -15,6 +19,11 @@ public class MainProgram : MonoBehaviour
 	private Page[] _pages;
 
 	public Login.LoginData LoginData;
+
+	private void Awake()
+	{
+		_instance = this;
+	}
 
 	private void Start()
 	{
