@@ -90,7 +90,7 @@ class Firebase:
         f_idToken = self.db.child("users").child(friendUsername).get().val()
         print(f_idToken)
         if (f_idToken == None):
-            return -1)
+            return -1
         users = self.db.child('users').get()
         username = None
         for user in users.each ():
