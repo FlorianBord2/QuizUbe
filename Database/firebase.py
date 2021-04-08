@@ -123,7 +123,17 @@ class Firebase:
     
     def getPendingList(self, userIdToken):
         plist  = self.db.child(userIdToken).child('pending_friend').get().val()
-        return plist
+        print (plist)
+        users = []
+        myformat = {"name" : "",
+            "userIdToken": ""}
+        for each in plist:
+            print(each)
+            print(plist[each])
+            myformat['name'] = each
+            myformat['userIdToken'] = plist[each]
+            users.append(myformat)
+        return json.dumps(users)
 
     #Data management
 
