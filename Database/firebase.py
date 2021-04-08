@@ -90,7 +90,7 @@ class Firebase:
         f_idToken = self.db.child("users").child(friendUsername).get().val()
         print(f_idToken)
         if (f_idToken == None):
-            return ("User not found")
+            return -1)
         users = self.db.child('users').get()
         username = None
         for user in users.each ():
@@ -98,7 +98,7 @@ class Firebase:
                 username = user.key()
         print(username)
         self.db.child(f_idToken).child('pending_friend').child(username).set(userIdToken)
-        return 'invite send'
+        return 1
 
     def acceptFriend(self, userIdToken, friendUsername):
         f_idToken = self.db.child(userIdToken).child('pending_friend').child(friendUsername).get().val()
