@@ -79,6 +79,13 @@ class Firebase:
             print("Can't verify email address: {}".format(e), sys.stderr)
             return self.http_error(e)
 
+    def friendList(self, userIdToken):
+        friends = self.db.child(userIdToken).child('friends').get().val()
+        print(friends)
+        if (friends == None):
+            return '{}'
+        return friends
+
     def addFriend(self, userIdToken, friendUsername):
         f_idToken = self.db.child("users").child(friendUsername).get().val()
         print(f_idToken)

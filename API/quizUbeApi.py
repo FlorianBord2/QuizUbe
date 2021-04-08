@@ -154,6 +154,17 @@ def refresh_token():
     else:
         return 'Wrong method'
 
+@app.route('/users/friend_list')
+def friend_list():
+    if request.method == 'GET':
+        try:
+            userIdToken = request.headers['userIdToken']    
+        except:
+            return Response('Bad parameter, make sure you have "userIdToken" param in your header', status=400, mimetype='application/json')
+        return f.friendList(userIdToken)
+    else:
+        return 'Wrong method'
+
 @app.route('/users/add_friend')
 def add_friend():
     if request.method == 'GET':
