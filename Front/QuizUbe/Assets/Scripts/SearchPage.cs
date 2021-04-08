@@ -15,7 +15,7 @@ public class SearchPage : Page
     public InputField SearchField;
     public Button SearchButton;
 
-    private const string SEARCH_CHANNEL_URL = @"http://127.0.0.1:5000/quiz/search_channel?q=";
+    private const string SEARCH_CHANNEL_URL = @"http://127.0.0.1:65000/quiz/search_channel?q=";
 
     private List<ChannelResult> _results;
 
@@ -68,6 +68,6 @@ public class SearchPage : Page
 
 	public override void Open(string value)
 	{
-
+        gameObject.SetActive(true);
 	}
 }

@@ -9,6 +9,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Net.Http;
 using System.Text;
+using Newtonsoft.Json;
 
 public class WebUtility : MonoBehaviour
 {
@@ -25,9 +26,23 @@ public class WebUtility : MonoBehaviour
 
 	public string Get(string uri)
 	{
+		return Get(uri, null);
+	}
+
+	public string Get(string uri, params (string name, string value)[] headerValuePair)
+	{
 		//TODO update to http client method as http request isn't as performant like following 
 		//var responseString = await client.GetStringAsync("http://www.example.com/recepticle.aspx");
 		HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+		if(headerValuePair != null)
+		{
+			foreach (var v in headerValuePair)
+			{
+				request.Headers.Add(v.name, v.value);
+			}
+		}
+		
 		request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
 		using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
@@ -40,7 +55,8 @@ public class WebUtility : MonoBehaviour
 
 	public async void Post<T>(string uri, T value)
 	{
-		var content = new StringContent(value.ToString(), Encoding.UTF8, "application/json");
+		string json = JsonConvert.SerializeObject(value);
+		var content = new StringContent(json, Encoding.UTF8, "application/json");
 		var result = await client.PostAsync(uri, content);
 	}
 

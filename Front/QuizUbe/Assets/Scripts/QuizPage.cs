@@ -9,8 +9,8 @@ using System;
 
 public class QuizPage : Page
 {
-	private const string CREATE_QUIZ_URL = @"http://127.0.0.1:5000/quiz/create_quiz?channelId=";
-	private const string SAVE_QUIZ_URL = @"http://127.0.0.1:5000/quiz/save_quiz";
+	private const string CREATE_QUIZ_URL = @"http://127.0.0.1:65000/quiz/create_quiz?channelId=";
+	private const string SAVE_QUIZ_URL = @"http://127.0.0.1:65000/quiz/save_quiz";
 
 	private QuizResponse _quizResponse;
 	private Quiz _quiz;
@@ -55,13 +55,18 @@ public class QuizPage : Page
 				_questionObjects[i].OnQuestionAnswered += OnQuestionAnswered;
 			}
 		});
+
+		_userResponses = new int[NB_QUESTIONS];
 		//TODO add small move maybe?
 	}
 
 	private int _questionIdx = 0;
 	private int _goodAnswerCount = 0;
-	private void OnQuestionAnswered(bool correct)
+	private int[] _userResponses;
+	private void OnQuestionAnswered(int answer, bool correct)
 	{
+		_userResponses[_questionIdx] = answer;
+
 		_questionIdx++;
 		if (correct)
 			_goodAnswerCount++;
@@ -81,8 +86,14 @@ public class QuizPage : Page
 	{
 		QuizResponse toPost = _quizResponse;
 		toPost.userScore = _goodAnswerCount.ToString();
+		toPost.userLocalId = Program.LoginData.localId;
 
-		Debug.Log("localUserId: " + toPost.userLocalId);
+		for (int i = 0; i < NB_QUESTIONS; i++)
+		{
+			toPost.quiz[i].userResponse = _userResponses[i].ToString();
+		}
+
+		Debug.Log("localUserId: " + Program.LoginData.localId);
 		WebUtility.Instance.Post(SAVE_QUIZ_URL, toPost);
 	}
 }

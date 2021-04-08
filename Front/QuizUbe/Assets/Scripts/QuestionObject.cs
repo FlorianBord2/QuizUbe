@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class QuestionObject : MonoBehaviour
 {
-	public delegate void OnQuestionEvent(bool correct);
+	public delegate void OnQuestionEvent(int answer, bool correct);
 	public OnQuestionEvent OnQuestionAnswered;
 
 	public Text Question;
@@ -35,9 +35,15 @@ public class QuestionObject : MonoBehaviour
 
 	private void OnVideoObjectClicked(VideoObject sender)
 	{
-		bool rightAnswer = Array.IndexOf(_videosObjects, sender) == _goodAnswer;
+		int answer = Array.IndexOf(_videosObjects, sender);
+		bool rightAnswer = answer == _goodAnswer;
 		sender.Feedback(rightAnswer);
 
-		DOVirtual.DelayedCall(0.5f, () => OnQuestionAnswered?.Invoke(rightAnswer));
+		if (!rightAnswer)
+		{
+			_videosObjects[_goodAnswer].Feedback(true);
+		}
+
+		DOVirtual.DelayedCall(0.5f, () => OnQuestionAnswered?.Invoke(answer, rightAnswer));
 	}
 }
