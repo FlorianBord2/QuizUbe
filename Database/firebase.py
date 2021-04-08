@@ -129,6 +129,8 @@ class Firebase:
     
     def getPendingList(self, userIdToken):
         plist  = self.db.child(userIdToken).child('pending_friend').get().val()
+        if plist == None:
+            return {}
         users = []
         myformat = {"name" : "",
             "userIdToken": ""}
