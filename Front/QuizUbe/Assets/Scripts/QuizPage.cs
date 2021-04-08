@@ -16,14 +16,18 @@ public class QuizPage : Page
 	private Quiz _quiz;
 
 	public Transform QuestionsRoot;
-
 	public QuestionObject QuestionObjectPrefab;
 
 	private QuestionObject[] _questionObjects;
 
 	public Button StartQuizButton;
 
-	private const int NB_QUESTIONS = 4;
+	private int _nbQuestions;
+
+	public GameObject QuizRoot;
+	public GameObject ResultRoot;
+
+	public Text ResultText;
 
 	public override void Open(string value)
 	{
@@ -37,26 +41,50 @@ public class QuizPage : Page
 
 		_quizResponse = response;
 		_quiz = new Quiz(response);
+		_nbQuestions = _quiz.Questions.Length;
+		ResultRoot.SetActive(false);
+		QuizRoot.SetActive(true);
 		//TODO Wait for quiz in async
-    }
 
+		StartQuizButton.image.DOFade(1f, 0f);
+		StartQuizButton.gameObject.SetActive(true);
+
+		_starting = false;
+
+		if (_questionObjects != null)
+		{
+			foreach (QuestionObject qo in _questionObjects)
+			{
+				Destroy(qo.gameObject);
+			}
+		}
+		_questionObjects = new QuestionObject[_nbQuestions];
+	}
+
+	private bool _starting = false;
 	public void OnStartQuizButtonClicked()
 	{
-		_questionObjects = new QuestionObject[NB_QUESTIONS];
+		if (_starting) return;
+
+		_starting = true;
+
+		_userResponses = new int[_nbQuestions];
+		_questionIdx = 0;
+		_goodAnswerCount = 0;
+
 		StartQuizButton.image.DOFade(0f, 0.5f).OnComplete(() => 
 		{
 			StartQuizButton.gameObject.SetActive(false);
 
-			for (int i = 0; i < NB_QUESTIONS; i++)
+			for (int i = 0; i < _nbQuestions; i++)
 			{
 				_questionObjects[i] = Instantiate(QuestionObjectPrefab, QuestionsRoot);
-				_questionObjects[i].Init(_quiz.Questions[i]);
+				_questionObjects[i].Init(_quiz.Questions[i], $"{i + 1}/{_nbQuestions}");
 				_questionObjects[i].gameObject.SetActive(i == 0);
 				_questionObjects[i].OnQuestionAnswered += OnQuestionAnswered;
 			}
 		});
-
-		_userResponses = new int[NB_QUESTIONS];
+		
 		//TODO add small move maybe?
 	}
 
@@ -71,12 +99,12 @@ public class QuizPage : Page
 		if (correct)
 			_goodAnswerCount++;
 
-		for (int i = 0; i < NB_QUESTIONS; i++)
+		for (int i = 0; i < _nbQuestions; i++)
 		{
 			_questionObjects[i].gameObject.SetActive(i == _questionIdx);
 		}
 
-		if (_questionIdx == NB_QUESTIONS)
+		if (_questionIdx == _nbQuestions)
 		{
 			QuizCompleted();
 		}
@@ -88,12 +116,27 @@ public class QuizPage : Page
 		toPost.userScore = _goodAnswerCount.ToString();
 		toPost.userLocalId = Program.LoginData.localId;
 
-		for (int i = 0; i < NB_QUESTIONS; i++)
+		for (int i = 0; i < _nbQuestions; i++)
 		{
 			toPost.quiz[i].userResponse = _userResponses[i].ToString();
 		}
 
-		Debug.Log("localUserId: " + Program.LoginData.localId);
 		WebUtility.Instance.Post(SAVE_QUIZ_URL, toPost);
+
+		ResultRoot.SetActive(true);
+		QuizRoot.SetActive(false);
+
+		ResultText.text = $"{_goodAnswerCount}/{_nbQuestions}";
+		ResultText.transform.DOScale(0f, 0f);
+		ResultText.transform.DOScale(1f, 0.75f).SetEase(Ease.OutBack).SetDelay(1f);
+
+		QuitQuizButton.transform.DOScale(0f, 0f);
+		QuitQuizButton.transform.DOScale(1f, 0.75f).SetEase(Ease.OutBack).SetDelay(2f);
+	}
+	public Button QuitQuizButton;
+	public void OnEndQuizButtonClicked()
+	{
+		Close();
+		Program.MainPage.Open(null);
 	}
 }

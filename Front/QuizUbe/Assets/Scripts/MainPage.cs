@@ -9,7 +9,7 @@ public class MainPage : Page
 	public void OnPlayButtonClicked()
 	{
 		Close();
-		Program.QuizPage.Open(null);
+		Program.SearchPage.Open(null);
 	}
 
 	public void OnFriendsButtonClicked()

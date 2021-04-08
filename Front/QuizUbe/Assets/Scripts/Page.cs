@@ -12,4 +12,9 @@ public abstract class Page : MonoBehaviour
 	{
 		gameObject.SetActive(false);
 	}
+
+	public virtual void Back()
+	{
+
+	}
 }

@@ -12,6 +12,7 @@ public class QuestionObject : MonoBehaviour
 	public OnQuestionEvent OnQuestionAnswered;
 
 	public Text Question;
+	public Text IndexText;
 	public Transform VideoObjectsRoot;
 	public VideoObject VideoObjectPrefab;
 
@@ -19,7 +20,9 @@ public class QuestionObject : MonoBehaviour
 
 	private int _goodAnswer;
 
-	public void Init(Quiz.Question question)
+	private bool _clicked = false;
+
+	public void Init(Quiz.Question question, string idxTxt)
 	{
 		Question.text = question.QuestionType; //TODO LOC
 
@@ -31,10 +34,15 @@ public class QuestionObject : MonoBehaviour
 			_videosObjects[i].OnVideoObjectClicked += OnVideoObjectClicked;
 		}
 		_goodAnswer = question.GoodAnswer;
+
+		IndexText.text = idxTxt;
 	}
 
 	private void OnVideoObjectClicked(VideoObject sender)
 	{
+		if (_clicked) return;
+		_clicked = true;
+
 		int answer = Array.IndexOf(_videosObjects, sender);
 		bool rightAnswer = answer == _goodAnswer;
 		sender.Feedback(rightAnswer);

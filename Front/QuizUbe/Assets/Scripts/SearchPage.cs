@@ -70,4 +70,10 @@ public class SearchPage : Page
 	{
         gameObject.SetActive(true);
 	}
+
+	public override void Back()
+	{
+        Close();
+        Program.MainPage.Open(null);
+	}
 }

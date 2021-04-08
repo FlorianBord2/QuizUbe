@@ -69,6 +69,7 @@ public class FriendsPage : Page
 		{
 			Destroy(fb.gameObject);
 		}
+		_pendingRequests.Clear();
 
 		string pendingResponse = WebUtility.Instance.Get(GET_PENDING_REQUEST_URL, ("userIdToken", Program.LoginData.localId));
 		IEnumerable<FriendsRequestData> pendingRequests = new List<FriendsRequestData>();
@@ -103,6 +104,7 @@ public class FriendsPage : Page
 		{
 			Destroy(fb.gameObject);
 		}
+		_friends.Clear();
 
 		string friendsResponse = WebUtility.Instance.Get(GET_FRIENDS_URL, ("userIdToken", Program.LoginData.localId));
 		IEnumerable<FriendsRequestData> friends = new List<FriendsRequestData>();
@@ -129,5 +131,11 @@ public class FriendsPage : Page
 	{
 		RefreshRequestsList();
 		RefreshFriendList();
+	}
+
+	public override void Back()
+	{
+		Close();
+		Program.MainPage.Open(null);
 	}
 }
