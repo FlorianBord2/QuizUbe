@@ -157,6 +157,7 @@ class Firebase:
         self.saveStats(data['userLocalId'], data['userScore'])
 
     def saveStats(self, userLocalId, userScore):
+        userScore = int(userScore)
         users = self.db.child('users').get()
         username = None
         for user in users.each ():
@@ -175,10 +176,24 @@ class Firebase:
             self.db.child("nb_quiz").child(username).set(nbQuiz + 1)
     
     def getLeaders(self):
-        score = self.db.child("score").order_by_value().get().val()
-        quiz = self.db.child("nb_quiz").order_by_value().get().val()
-        res = {"score" : score, "quiz" : quiz}
-        return res
+        score = self.db.child("score").get().val()
+        quiz = self.db.child("nb_quiz").get().val()
+        format_score = []
+        format_quiz = []
+        myformat = {"name" : "",
+            "score":0}
+        for each in score:
+            myformat['name'] = each
+            myformat['score'] = score[each]
+            format_score.append(myformat)
+        myformat = {"name" : "",
+            "quiz":0}
+        for each in quiz:
+            myformat['name'] = each
+            myformat['quiz'] = quiz[each]
+            format_quiz.append(myformat)  
+        res = {"score" : format_score, "quiz" : format_quiz}
+        return json.dumps(res)
 
     def get_quiz_histo(self, userLocalId):
         return self.db.child(userLocalId).child('quizHisto').get().val()
