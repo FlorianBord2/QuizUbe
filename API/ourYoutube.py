@@ -24,7 +24,7 @@ class yapi:
             part='id,snippet',
             type='video',
             channelId=channelID,
-            maxResults=30
+            maxResults=100
         ).execute()
 
         videos = []
