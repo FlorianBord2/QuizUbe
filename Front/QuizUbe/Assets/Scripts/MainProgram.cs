@@ -13,7 +13,6 @@ public class MainProgram : MonoBehaviour
 	public Page SearchPage;
 	public Page QuizPage;
 	public Page FriendsPage;
-	public Page ResultPage;
 	public Page LeaderboardPage;
 
 	private Page[] _pages;
@@ -28,7 +27,7 @@ public class MainProgram : MonoBehaviour
 	private void Start()
 	{
 		//_pages = new Page[] { HomePage, SearchPage, QuizPage, ResultPage, LeaderboardPage };
-		_pages = new Page[] { LoginPage, MainPage, SearchPage, QuizPage, FriendsPage}; //Debug
+		_pages = new Page[] { LoginPage, MainPage, SearchPage, QuizPage, FriendsPage, LeaderboardPage }; //Debug
 
 		foreach (Page p in _pages)
 		{

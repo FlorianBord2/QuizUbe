@@ -2269,8 +2269,7 @@ MonoBehaviour:
   SearchPage: {fileID: 1415491788}
   QuizPage: {fileID: 1070540376}
   FriendsPage: {fileID: 1774793458}
-  ResultPage: {fileID: 0}
-  LeaderboardPage: {fileID: 0}
+  LeaderboardPage: {fileID: 1277255535}
 --- !u!1 &529770342
 GameObject:
   m_ObjectHideFlags: 0
@@ -3341,7 +3340,7 @@ GameObject:
   m_Component:
   - component: {fileID: 769213859}
   m_Layer: 5
-  m_Name: Score
+  m_Name: ScoreLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4689,12 +4688,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Program: {fileID: 0}
-  ScoreTotRoot: {fileID: 930234538}
-  TotQuizRoot: {fileID: 0}
+  SpawnRoot: {fileID: 0}
   ScoreTotButton: {fileID: 335630794}
   TotQuizzButton: {fileID: 1197810755}
   SelectedButtonColor: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 1}
   UnselectedButtonColor: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
+  ScoreLinePrefab: {fileID: 0}
 --- !u!1 &1292450058
 GameObject:
   m_ObjectHideFlags: 0
