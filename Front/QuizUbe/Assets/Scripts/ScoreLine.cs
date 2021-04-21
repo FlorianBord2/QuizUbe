@@ -5,12 +5,21 @@ using UnityEngine.UI;
 
 public class ScoreLine : MonoBehaviour
 {
-    public Text Username;
-    public Text Score;
+    public Text UsernameText;
+    public Text ScoreText;
+    public Text QuizCountText;
 
-    public void Init(string username, string score)
+    public string Username;
+    public int Score;
+    public int QuizCount;
+
+    public void Init(string username, int score, int quizCount)
 	{
-        Username.text = username;
-        Score.text = score;
+        Username = username;
+        UsernameText.text = username;
+        Score = score;
+        ScoreText.text = score.ToString();
+        QuizCount = quizCount;
+        QuizCountText.text = quizCount.ToString();
     }
 }

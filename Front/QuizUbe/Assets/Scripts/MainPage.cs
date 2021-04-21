@@ -20,7 +20,8 @@ public class MainPage : Page
 
 	public void OnLeaderboardButtonClicked()
 	{
-
+		Close();
+		Program.LeaderboardPage.Open(null);
 	}
 
 
