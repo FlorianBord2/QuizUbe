@@ -22,9 +22,14 @@ public class QuestionObject : MonoBehaviour
 
 	private bool _clicked = false;
 
+	private static Dictionary<string, string> questionsLoc = new Dictionary<string, string> {{ "mostViewed" ,"Which video has the most views?"}, 
+																																		{ "mostComment", "Which video has the most comments?" }, 
+																																		{ "mostDisike", "Which video has the most dislikes?" }, 
+																																		{ "mostLike", "Which video has the most likes?" } };
+
 	public void Init(Quiz.Question question, string idxTxt)
 	{
-		Question.text = question.QuestionType; //TODO LOC
+		Question.text = questionsLoc[question.QuestionType]; //TODO LOC
 
 		_videosObjects = new VideoObject[question.Videos.Length];
 		for (int i = 0; i < question.Videos.Length; i++)
@@ -52,6 +57,6 @@ public class QuestionObject : MonoBehaviour
 			_videosObjects[_goodAnswer].Feedback(true);
 		}
 
-		DOVirtual.DelayedCall(0.5f, () => OnQuestionAnswered?.Invoke(answer, rightAnswer));
+		DOVirtual.DelayedCall(1f, () => OnQuestionAnswered?.Invoke(answer, rightAnswer));
 	}
 }

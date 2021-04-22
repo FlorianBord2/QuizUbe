@@ -12,7 +12,7 @@ public class ChannelResultData
 
 public class ChannelResult : MonoBehaviour
 {
-	public delegate void ChannelResultEvent(string channelId);
+	public delegate void ChannelResultEvent(string channelId, string channelName, string channelUrl);
 	public ChannelResultEvent onClick;
 
 	public ChannelResultData ChannelResultData;
@@ -29,6 +29,6 @@ public class ChannelResult : MonoBehaviour
 
 	public void OnClick()
 	{
-		onClick?.Invoke(ChannelResultData.ChannelID);
+		onClick?.Invoke(ChannelResultData.ChannelID, ChannelResultData.Title, ChannelResultData.URL);
 	}
 }

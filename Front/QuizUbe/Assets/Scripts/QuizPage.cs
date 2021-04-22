@@ -9,7 +9,7 @@ using System;
 
 public class QuizPage : Page
 {
-	private const string CREATE_QUIZ_URL = @"http://127.0.0.1:65000/quiz/create_quiz?channelId=";
+	private const string CREATE_QUIZ_URL = @"http://127.0.0.1:65000/quiz/create_quiz";
 	private const string SAVE_QUIZ_URL = @"http://127.0.0.1:65000/quiz/save_quiz";
 
 	private QuizResponse _quizResponse;
@@ -33,7 +33,9 @@ public class QuizPage : Page
 	{
 		gameObject.SetActive(true);
 
-		string data = WebUtility.Instance.Get(CREATE_QUIZ_URL + value);
+		string[] val = value.Split("|".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+		string data = WebUtility.Instance.Get(CREATE_QUIZ_URL, ("channelId", val[0]), ("channelName", val[1]), ("channelUrl", val[2]));
 
 		StringReader reader = new StringReader(data);
 		JsonSerializer ser = JsonSerializer.Create(new JsonSerializerSettings());

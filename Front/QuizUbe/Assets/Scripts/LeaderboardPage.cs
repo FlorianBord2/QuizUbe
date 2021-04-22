@@ -1,6 +1,8 @@
 ﻿using DG.Tweening;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +12,7 @@ public class LeaderboardPage : Page
 	{
 		public string name;
 		public string score;
-		public string nbQuiz;
+		public string quiz;
 	}
 
 	private enum Tab
@@ -43,7 +45,7 @@ public class LeaderboardPage : Page
 
 	public ScoreLine ScoreLinePrefab;
 
-	private const string LEADERBOARD_REQUEST = @"";
+	private const string LEADERBOARD_REQUEST = @"http://127.0.0.1:65000/users/leadersboard";
 
 	private List<ScoreLine> _lines = new List<ScoreLine>();
 
@@ -60,18 +62,17 @@ public class LeaderboardPage : Page
 
 		_lines = new List<ScoreLine>();
 
-		string chars = "0123456789azertyuiopqsdfghjklmwxcvbn";
-		for (int i = 0; i < Random.Range(3, 10); i++)
-		{
-			System.Text.StringBuilder name = new System.Text.StringBuilder();
-			for (int y = 0; y < Random.Range(5, 15); y++)
-			{
-				name.Append(chars[Random.Range(0, chars.Length)]);
-			}
+		string historyResponse = WebUtility.Instance.Get(LEADERBOARD_REQUEST);
 
-			LeaderboardResult result = new LeaderboardResult { name = name.ToString(), score = Random.Range(20, 65000).ToString(), nbQuiz = Random.Range(20, 65000).ToString() };
+		StringReader reader = new StringReader(historyResponse);
+		JsonSerializer ser = JsonSerializer.Create(new JsonSerializerSettings());
+		List<LeaderboardResult> results = new List<LeaderboardResult>();
+		results = (List<LeaderboardResult>)ser.Deserialize(reader, typeof(List<LeaderboardResult>));
+
+		for (int i = 0; i < results.Count; i++)
+		{
 			ScoreLine line = Instantiate(ScoreLinePrefab, SpawnRoot);
-			line.Init(result.name, int.Parse(result.score), int.Parse(result.nbQuiz));
+			line.Init(results[i].name, int.Parse(results[i].score), int.Parse(results[i].quiz));
 			_lines.Add(line);
 		}
 
@@ -118,8 +119,8 @@ public class LeaderboardPage : Page
 				_lines.Sort(delegate (ScoreLine a, ScoreLine b)
 				{
 					if (_flipFlop)
-						return b.Score.CompareTo(a.Score);
-					return a.Score.CompareTo(b.Score);
+						return a.Score.CompareTo(b.Score);
+					return b.Score.CompareTo(a.Score);
 				});
 				break;
 
@@ -127,8 +128,8 @@ public class LeaderboardPage : Page
 				_lines.Sort(delegate (ScoreLine a, ScoreLine b)
 				{
 					if (_flipFlop)
-						return b.QuizCount.CompareTo(a.QuizCount);
-					return a.QuizCount.CompareTo(b.QuizCount);
+						return a.QuizCount.CompareTo(b.QuizCount);
+					return b.QuizCount.CompareTo(a.QuizCount);
 				});
 				break;
 		}

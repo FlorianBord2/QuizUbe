@@ -49,9 +49,9 @@ public class SearchPage : Page
         }
     }
 
-	private void OnResultClicked(string channelId)
+	private void OnResultClicked(string channelId, string channelName, string channelUrl)
 	{
-        Program.StartQuiz(channelId);
+        Program.StartQuiz(channelId, channelName, channelUrl);
 	}
 
 	private void ClearResults()

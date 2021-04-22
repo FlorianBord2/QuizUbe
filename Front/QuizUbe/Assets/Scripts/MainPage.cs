@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class MainPage : Page
 {
-
 	public void OnPlayButtonClicked()
 	{
 		Close();
@@ -24,10 +23,14 @@ public class MainPage : Page
 		Program.LeaderboardPage.Open(null);
 	}
 
+	public void OnHistoryButtonClicked()
+	{
+		Close();
+		Program.HistoryPage.Open(null);
+	}
 
 	public override void Open(string value)
 	{
         gameObject.SetActive(true);
 	}
-
 }

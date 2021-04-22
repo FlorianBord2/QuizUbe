@@ -14,6 +14,7 @@ public class MainProgram : MonoBehaviour
 	public Page QuizPage;
 	public Page FriendsPage;
 	public Page LeaderboardPage;
+	public Page HistoryPage;
 
 	private Page[] _pages;
 
@@ -26,8 +27,7 @@ public class MainProgram : MonoBehaviour
 
 	private void Start()
 	{
-		//_pages = new Page[] { HomePage, SearchPage, QuizPage, ResultPage, LeaderboardPage };
-		_pages = new Page[] { LoginPage, MainPage, SearchPage, QuizPage, FriendsPage, LeaderboardPage }; //Debug
+		_pages = new Page[] { LoginPage, MainPage, SearchPage, QuizPage, FriendsPage, LeaderboardPage, HistoryPage };
 
 		foreach (Page p in _pages)
 		{
@@ -38,9 +38,9 @@ public class MainProgram : MonoBehaviour
 		LoginData = new Login.LoginData();
 	}
 
-	public void StartQuiz(string channelIdx)
+	public void StartQuiz(string channelIdx, string channelName, string channelUrl)
 	{
 		SearchPage.Close();
-		QuizPage.Open(channelIdx);
+		QuizPage.Open($"{channelIdx}|{channelName}|{channelUrl}");
 	}
 }
