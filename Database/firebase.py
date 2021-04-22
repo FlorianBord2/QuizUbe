@@ -191,7 +191,13 @@ class Firebase:
         return json.dumps(res)
 
     def get_quiz_histo(self, userLocalId):
-        return self.db.child(userLocalId).child('quizHisto').get().val()
+        quiz_histo  = self.db.child(userLocalId).child('quizHisto').get().val()
+        print(quiz_histo)
+        res = []
+        for each in quiz_histo:
+            print(each)
+            res.append(quiz_histo[each])
+        return json.dumps(res)
     
     def get_quiz(self, quizUuid, userLocalId):
         res = {"quiz":self.db.child(userLocalId).child('quiz').child(quizUuid).get().val()}
