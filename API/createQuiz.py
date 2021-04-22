@@ -16,6 +16,8 @@ class create_quiz:
         self.QuestionTypePath = "./questionType/"
         now = datetime.now()
         self.quiz = {
+            "channelName":None,
+            "channelUrl":None,
             "userLocalId": "userLocalId",
             "date": now.strftime("%d/%m/%Y %H:%M:%S"),
             "time": time.time(),
@@ -28,7 +30,9 @@ class create_quiz:
     def getVideoFeed(self, channelId):
         self.videoFeed = self.youtubeApi.youtube_getvideofeed(channelId)
 
-    def create(self, channelId):
+    def create(self, channelId, channelName, channelUrl):
+        self.quiz['channelName'] = channelName
+        self.quiz['channelUrl'] = channelUrl
         self.getVideoFeed(channelId)
         self.quizGeneration()
         self.quiz['nbQuestion'] = len(self.quiz['quiz'])

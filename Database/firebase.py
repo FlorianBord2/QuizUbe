@@ -143,7 +143,7 @@ class Firebase:
     #Data management
 
     def save_quiz(self, data):
-        print(data['userLocalId'])
+        print(data)
         quiz_histo = {
             'date': data['date'],
             'time': data['time'],

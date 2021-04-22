@@ -32,7 +32,7 @@ def search_channel():
 def create_quiz():
     if request.method == 'GET':
         cq = create_quiz_class()
-        res = cq.create(request.args['channelId'])
+        res = cq.create(request.headers['channelId'], request.headers['channelName'], request.headers['channelUrl'])
         return res
     else:
         return 'Wrong method'
@@ -64,6 +64,17 @@ def get_quiz_histo():
 def get_quiz():
     if request.method == 'GET':
         quizuid = request.headers['quizUuid']
+        userLocalId = request.headers['userLocalId']
+        return f.get_quiz(quizuid, userLocalId)
+        # except:
+        #     return Response('Bad parameter, make sure you have "quizUuid" and "userLocalId" param in your header', status=400, mimetype='application/json')
+    else:
+        return 'Wrong method'
+
+@app.route('/quiz/defis', methods=['POST'])
+def save_defis():
+    if request.method == 'POST':
+        quizuid = request.headers['userLocalId']
         userLocalId = request.headers['userLocalId']
         return f.get_quiz(quizuid, userLocalId)
         # except:
