@@ -178,21 +178,16 @@ class Firebase:
     def getLeaders(self):
         score = self.db.child("score").get().val()
         quiz = self.db.child("nb_quiz").get().val()
-        format_score = []
-        format_quiz = []
-        myformat = {"name" : "",
-            "score":0}
+        res = []
+        
         for each in score:
+            myformat = {"name" : "",
+            "score":0,
+            "quiz":0}
             myformat['name'] = each
             myformat['score'] = score[each]
-            format_score.append(myformat)
-        myformat = {"name" : "",
-            "quiz":0}
-        for each in quiz:
-            myformat['name'] = each
             myformat['quiz'] = quiz[each]
-            format_quiz.append(myformat)  
-        res = {"score" : format_score, "quiz" : format_quiz}
+            res.append(myformat)
         return json.dumps(res)
 
     def get_quiz_histo(self, userLocalId):
