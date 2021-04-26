@@ -72,11 +72,45 @@ def get_quiz():
         return 'Wrong method'
 
 @app.route('/quiz/defis', methods=['POST'])
+def add_defis():
+    if request.method == 'POST':
+        userLocalId = request.headers['userLocalId']
+        cibleName = request.headers['cibleName']
+        cibleId = request.headers['cibleId']
+        quiz = request.json
+        return f.add_defis(quiz, userLocalId, cibleId)
+        # except:
+        #     return Response('Bad parameter, make sure you have "quizUuid" and "userLocalId" param in your header', status=400, mimetype='application/json')
+    else:
+        return 'Wrong method'
+
+@app.route('/quiz/get_defis_list', methods=['GET'])
+def get_defis():
+    if request.method == 'GET':
+        userLocalId = request.headers['userLocalId']
+        return f.get_defis(userLocalId)
+        # except:
+        #     return Response('Bad parameter, make sure you have "quizUuid" and "userLocalId" param in your header', status=400, mimetype='application/json')
+    else:
+        return 'Wrong method'
+
+@app.route('/quiz/get_defis_quiz', methods=['GET'])
+def get_defis_quiz():
+    if request.method == 'GET':
+        fromId = request.headers['fromId']
+        uuid = request.headers['uuid']
+        return f.get_defis_quiz(fromId, uuid)
+        # except:
+        #     return Response('Bad parameter, make sure you have "quizUuid" and "userLocalId" param in your header', status=400, mimetype='application/json')
+    else:
+        return 'Wrong method'
+
+@app.route('/quiz/save_defis', methods=['POST'])
 def save_defis():
     if request.method == 'POST':
-        quizuid = request.headers['userLocalId']
         userLocalId = request.headers['userLocalId']
-        return f.get_quiz(quizuid, userLocalId)
+        quiz = request.json
+        return f.save_defis(userLocalId, quiz)
         # except:
         #     return Response('Bad parameter, make sure you have "quizUuid" and "userLocalId" param in your header', status=400, mimetype='application/json')
     else:

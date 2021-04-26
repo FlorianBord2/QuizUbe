@@ -47,6 +47,13 @@ class Firebase:
         return self.db
 
     # User tools
+    def findName(self, userIdToken):
+        users = self.db.child('users').get()
+        username = None
+        for user in users.each ():
+            if user.val() == userIdToken:
+                username = user.key()
+        return username
 
     def chekc_username(self, username):
         users = self.db.child("users").child(username).get().val()
@@ -145,24 +152,22 @@ class Firebase:
     def save_quiz(self, data):
         print(data)
         quiz_histo = {
+            'channelName' : data['channelName'],
+            'channelUrl': data['channelUrl'],
             'date': data['date'],
             'time': data['time'],
             'uuid': data['uuid'],
             'userScore':data['userScore'],
-            'nbQuestion': data['nbQuestion']
+            'nbQuestion': data['nbQuestion'],
+            'defis':False
             }
         self.db.child(data['userLocalId']).child('quizHisto').push(quiz_histo)
         self.db.child(data['userLocalId']).child('quiz').child(data['uuid']).set(data['quiz'])
-        #SaveStats
+        #SaveStatsuserLocalId
         self.saveStats(data['userLocalId'], data['userScore'])
 
     def saveStats(self, userLocalId, userScore):
-        userScore = int(userScore)
-        users = self.db.child('users').get()
-        username = None
-        for user in users.each ():
-            if user.val() == userLocalId:
-                username = user.key()
+        
         score = self.db.child("score").child(username).get().val()
         if score == None:
             self.db.child("score").child(username).set(userScore)
@@ -202,13 +207,81 @@ class Firebase:
     def get_quiz(self, quizUuid, userLocalId):
         res = {"quiz":self.db.child(userLocalId).child('quiz').child(quizUuid).get().val()}
         return res
+    
+    #On en est la
+    #Il faut encore voir comment sauvegarder les data defis
+    def add_defis(self, data, userLocalId, cibleId):
+        username = self.findName(userLocalId)
+        res = {'fromName':username,
+        'fromId': userLocalId,
+        'quiz_uuid': data['uuid'],
+        'channelName' : data['channelName'],
+        'channelUrl': data['channelUrl']
+        }
+        self.db.child(cibleId).child("pendingDefis").child(data['uuid']).set(res)
+
+        quiz_histo = {
+            'channelName' : data['channelName'],
+            'channelUrl': data['channelUrl'],
+            'date': data['date'],
+            'time': data['time'],
+            'uuid': data['uuid'],
+            'userScore':data['userScore'],
+            'userScore2':"None",
+            'nbQuestion': data['nbQuestion'],
+            'defis':True,
+            'from':userLocalId,
+            'to':cibleId,
+            'done':False
+            }
+        self.db.child(userLocalId).child('quizHisto').child(data['uuid']).set(quiz_histo)
+        self.db.child(userLocalId).child('quiz').child(data['uuid']).set(data['quiz'])
+        return json.dumps("ok")
+    
+    def get_defis(self, userLocalId):
+        pending = self.db.child(userLocalId).child('pendingDefis').get().val()
+        res  = []
+        ##ADD ERROR CASE NO PE?DING
+        for each in pending:
+            print(each)
+            res.append(pending[each])
+        return json.dumps(res)
+    
+    def get_defis_quiz(self, fromId, uuid):
+        quiz = self.db.child(fromId).child('quiz').child(uuid).get().val()
+        histo = self.db.child(fromId).child('quizHisto').child(uuid).get().val()
+        i = 0
+        while i < histo['nbQuestion']:
+            quiz[i]['userResponse'] = "None"
+            i = i + 1
+        res = {'histo': histo,
+        'quiz': quiz}
+        return json.dumps(res)
+    
+    def save_defis(self, userLocalId, quiz):
+        print(userLocalId)
+        histo = quiz['histo']
+        print(histo)
+        quiz = quiz['quiz']
+        #update quizHisto chez histo[from] pour le UUID uuid
+        histo['done'] = True
+        self.db.child(histo['from']).child('quizHisto').child(histo['uuid']).update(histo)
+        #save le quiz avec metadata chez userLocalId
+        self.db.child(userLocalId).child('quizHisto').child(histo['uuid']).set(histo)
+        #save l'histo chez userlocalId
+        self.db.child(userLocalId).child('quiz').child(histo['uuid']).set(quiz)
+        #remove le quiz des pending
+        self.db.child(userLocalId).child('pendingDefis').child(histo['uuid']).remove()
+        return 'ok'
+
+
 
 #test main
 
-def main():
-    firebase =fb()
+#def main():
+    #firebase =fb()
     #firebase.create_user('yolo@yopmail.com', '123456789')
-    user = firebase.login('avogawo-3902@yopmail.com', '123456789')
+    #user = firebase.login('avogawo-3902@yopmail.com', '123456789')
     #print(user)
-    print(firebase.get_account_info(user['idToken']))
+    #print(firebase.get_account_info(user['idToken']))
     #print(firebase.verify_mail(user['idToken']))
