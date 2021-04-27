@@ -231,7 +231,9 @@ class Firebase:
             'nbQuestion': data['nbQuestion'],
             'defis':True,
             'from':userLocalId,
+            'fromName': self.findName(userLocalId),
             'to':cibleId,
+            'toName':self.findName(cibleId),
             'done':False
             }
         self.db.child(userLocalId).child('quizHisto').child(data['uuid']).set(quiz_histo)
