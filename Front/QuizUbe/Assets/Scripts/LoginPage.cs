@@ -12,21 +12,27 @@ public class LoginPage : Page
 	//Login
 	public InputField UserInputField;
 	public InputField PasswordInputField;
+	public GameObject EmailSent;
 
 	//Register
 	public InputField RUserInputField;
 	public InputField RUsernameInputField;
 	public InputField RPasswordInputField;
 
+	//Reset
+	public InputField ResetPasswordInputField;
+
 	public Text ErrorMsg;
 
 	private const string LOGIN_URL = @"http://127.0.0.1:65000/users/login";
 	private const string REGISTER_URL = @"http://127.0.0.1:65000/users/register?";
+	private const string RESET_URL = @"http://127.0.0.1:65000/users/reset_password";
 
 	private enum SelectedTab
 	{
 		Login,
-		Register
+		Register,
+		Forgot
 	}
 
 	public GameObject[] Tabs;
@@ -73,6 +79,7 @@ public class LoginPage : Page
 				LoadNextPage();
 			}
 		}
+		EmailSent.SetActive(false);
 	}
 
 	public void OnLoginButtonClicked()
@@ -99,6 +106,7 @@ public class LoginPage : Page
 				LoadNextPage();
 			}
 		}
+		EmailSent.SetActive(false);
 	}
 
 	private void LoadNextPage()
@@ -119,6 +127,27 @@ public class LoginPage : Page
 		for (int i = 0; i < Tabs.Length; i++)
 		{
 			Tabs[i].SetActive(i == (int)tabToOpen);
+		}
+	}
+
+	public void OnForgotPasswordClicked()
+	{
+		OpenTab(SelectedTab.Forgot);
+	}
+
+	public void OnReturnToLoginClicked()
+	{
+		OpenTab(SelectedTab.Login);
+	}
+
+	public void OnResetPasswordClicked()
+	{
+		string result = WebUtility.Instance.Get(RESET_URL, ("email", ResetPasswordInputField.text));
+
+		if (!result.Contains("code"))
+		{
+			OpenTab(SelectedTab.Login);
+			EmailSent.SetActive(true);
 		}
 	}
 }

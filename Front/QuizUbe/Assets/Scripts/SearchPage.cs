@@ -51,7 +51,7 @@ public class SearchPage : Page
 
 	private void OnResultClicked(string channelId, string channelName, string channelUrl)
 	{
-        Program.StartQuiz(channelId, channelName, channelUrl);
+        Program.StartQuiz(channelId, channelName, channelUrl, CredsPair.HasValue);
 	}
 
 	private void ClearResults()
@@ -66,9 +66,21 @@ public class SearchPage : Page
 		}
 	}
 
+    public (string challName, string challUserId)? CredsPair;
 	public override void Open(string value)
 	{
         gameObject.SetActive(true);
+
+        if (!string.IsNullOrEmpty(value)) //We receive name and userID if we come from a challenge, format : {name}, {userId}
+        {
+            string[] values = value.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            CredsPair = (values[0], values[1]);
+        }
+        else
+		{
+            CredsPair = null;
+        }
 	}
 
 	public override void Back()

@@ -38,9 +38,10 @@ public class MainProgram : MonoBehaviour
 		LoginData = new Login.LoginData();
 	}
 
-	public void StartQuiz(string channelIdx, string channelName, string channelUrl)
+	public void StartQuiz(string channelIdx, string channelName, string channelUrl, bool isChall)
 	{
 		SearchPage.Close();
-		QuizPage.Open($"{channelIdx}|{channelName}|{channelUrl}");
+		string val = isChall ? "1" : "0";
+		QuizPage.Open($"{channelIdx}|{channelName}|{channelUrl};{val}");
 	}
 }

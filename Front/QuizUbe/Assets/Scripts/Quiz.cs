@@ -3,13 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public class QuizHistoResponse
+{
+	public HistoResponse histo;
+	public QuizResponse.QuizResponseStructure[] quiz;
+}
+
+public class HistoResponse
+{
+	public string channelName;
+	public string channelUrl;
+	public string date;
+	public bool defis;
+	public bool done;
+	public string from;
+	public string fromName;
+	public int nbQuestion;
+	public string time;
+	public string to;
+	public string toName;
+	public int userScore;
+	public int userScore2;
+	public string uuid;
+}
+
 public class QuizResponse
 {
 	public string userLocalId;
 	public string date;
 	public string time;
 	public string uuid;
-	public string userScore;
+	public string channelName;
+	public string channelUrl;
+	public int userScore;
 	public string nbQuestion;
 
 	public QuizResponseStructure[] quiz;
@@ -89,6 +115,14 @@ public class Quiz
 			Questions[i] = new Question(quizResponse.quiz[i]);
 		}
 	}
+
+	public Quiz(QuizHistoResponse quizHistoResponse)
+	{
+		Questions = new Question[quizHistoResponse.quiz.Length];
+
+		for (int i = 0; i < quizHistoResponse.quiz.Length; i++)
+		{
+			Questions[i] = new Question(quizHistoResponse.quiz[i]);
+		}
+	}
 }
-
-

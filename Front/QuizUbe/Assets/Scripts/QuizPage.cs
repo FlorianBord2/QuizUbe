@@ -11,8 +11,11 @@ public class QuizPage : Page
 {
 	private const string CREATE_QUIZ_URL = @"http://127.0.0.1:65000/quiz/create_quiz";
 	private const string SAVE_QUIZ_URL = @"http://127.0.0.1:65000/quiz/save_quiz";
+	private const string ADD_DEFI_URL = @"http://127.0.0.1:65000/quiz/defis";
+	private const string SAVE_DEFI_URL = @"http://127.0.0.1:65000/quiz/save_defis";
 
 	private QuizResponse _quizResponse;
+	private QuizHistoResponse _histoQuizResponse;
 	private Quiz _quiz;
 
 	public Transform QuestionsRoot;
@@ -29,11 +32,20 @@ public class QuizPage : Page
 
 	public Text ResultText;
 
+
+	private bool _isChallAndImSender = false;
+	private bool _isChallAndImReceiver = false;
 	public override void Open(string value)
 	{
+
 		gameObject.SetActive(true);
 
-		string[] val = value.Split("|".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+		string[] @params = value.Split(';');
+
+		string[] val = @params[0].Split("|".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+		_isChallAndImSender = int.Parse(@params[1]) == 1;
+		_isChallAndImReceiver = false;
 
 		string data = WebUtility.Instance.Get(CREATE_QUIZ_URL, ("channelId", val[0]), ("channelName", val[1]), ("channelUrl", val[2]));
 
@@ -42,7 +54,39 @@ public class QuizPage : Page
 		QuizResponse response = (QuizResponse)ser.Deserialize(reader, typeof(QuizResponse));
 
 		_quizResponse = response;
+		_quizResponse.channelName = val[1];
+		_quizResponse.channelUrl = val[2];
+
+
 		_quiz = new Quiz(response);
+		_nbQuestions = _quiz.Questions.Length;
+		ResultRoot.SetActive(false);
+		QuizRoot.SetActive(true);
+		//TODO Wait for quiz in async
+
+		StartQuizButton.image.DOFade(1f, 0f);
+		StartQuizButton.gameObject.SetActive(true);
+
+		_starting = false;
+
+		if (_questionObjects != null)
+		{
+			foreach (QuestionObject qo in _questionObjects)
+			{
+				Destroy(qo.gameObject);
+			}
+		}
+		_questionObjects = new QuestionObject[_nbQuestions];
+	}
+
+	public void OpenAndInitWithQuizHisto(QuizHistoResponse quizHisto)
+	{
+		_isChallAndImSender = false;
+		_isChallAndImReceiver = true;
+		gameObject.SetActive(true);
+
+		_histoQuizResponse = quizHisto;
+		_quiz = new Quiz(quizHisto);
 		_nbQuestions = _quiz.Questions.Length;
 		ResultRoot.SetActive(false);
 		QuizRoot.SetActive(true);
@@ -115,15 +159,40 @@ public class QuizPage : Page
 	private void QuizCompleted()
 	{
 		QuizResponse toPost = _quizResponse;
-		toPost.userScore = _goodAnswerCount.ToString();
-		toPost.userLocalId = Program.LoginData.localId;
-
-		for (int i = 0; i < _nbQuestions; i++)
+		
+		if (toPost != null)
 		{
-			toPost.quiz[i].userResponse = _userResponses[i].ToString();
+			toPost.userScore = _goodAnswerCount;
+			toPost.userLocalId = Program.LoginData.localId;
+
+			for (int i = 0; i < _nbQuestions; i++)
+			{
+				toPost.quiz[i].userResponse = _userResponses[i].ToString();
+			}
 		}
 
-		WebUtility.Instance.Post(SAVE_QUIZ_URL, toPost);
+		
+
+		if (_isChallAndImSender)
+		{
+			WebUtility.Instance.Post(ADD_DEFI_URL, toPost, ("userLocalId", Program.LoginData.localId), ("cibleName", (Program.SearchPage as SearchPage).CredsPair.Value.challName), ("cibleId", (Program.SearchPage as SearchPage).CredsPair.Value.challUserId));
+		}
+		else if (_isChallAndImReceiver)
+		{
+			QuizHistoResponse toHistoPost = _histoQuizResponse;
+			toHistoPost.histo.userScore2 = _goodAnswerCount;
+
+			for (int i = 0; i < _nbQuestions; i++)
+			{
+				toHistoPost.quiz[i].userResponse = _userResponses[i].ToString();
+			}
+
+			WebUtility.Instance.Post(SAVE_DEFI_URL, toHistoPost, ("userLocalId", Program.LoginData.localId));
+		}
+		else
+		{
+			WebUtility.Instance.Post(SAVE_QUIZ_URL, toPost);
+		}
 
 		ResultRoot.SetActive(true);
 		QuizRoot.SetActive(false);

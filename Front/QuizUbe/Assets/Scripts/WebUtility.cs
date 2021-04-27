@@ -53,10 +53,19 @@ public class WebUtility : MonoBehaviour
 		}
 	}
 
-	public async void Post<T>(string uri, T value)
+	public async void Post<T>(string uri, T value, params (string name, string value)[] headerValuePair)
 	{
 		string json = JsonConvert.SerializeObject(value);
 		var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+		if (headerValuePair != null)
+		{
+			foreach (var v in headerValuePair)
+			{
+				content.Headers.Add(v.name, v.value);
+			}
+		}
+
 		var result = await client.PostAsync(uri, content);
 	}
 

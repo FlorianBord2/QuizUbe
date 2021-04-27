@@ -11,10 +11,17 @@ public class HistoryPage : Page
 		public string channelName;
 		public string channelUrl;
 		public string date;
-		public string nbQuestion;
+		public int nbQuestion;
 		public string time;
-		public string userScore;
+		public int userScore;
+		public int userScore2;
 		public string uuid;
+		public bool defis;
+		public bool done;
+		public string from;
+		public string fromName;
+		public string to;
+		public string toName;
 	}
 
 	public HistoCase HistoCasePrefab;
@@ -45,7 +52,21 @@ public class HistoryPage : Page
 		foreach (HistoResponse hr in histos)
 		{
 			HistoCase hc = Instantiate(HistoCasePrefab, SpawnRoot);
-			hc.Init(hr.channelName, hr.userScore, hr.nbQuestion, hr.date);
+
+			if (hr.defis)
+			{
+				bool receiving = hr.from != Program.LoginData.localId;
+				string otherName = receiving ? hr.fromName : hr.toName;
+
+				bool won = receiving ? hr.userScore2 >= hr.userScore : hr.userScore >= hr.userScore2;
+
+				hc.Init(hr.channelName, hr.userScore.ToString(), hr.nbQuestion.ToString(), hr.date, otherName, !hr.done, receiving, won);
+			}
+			else
+			{
+				hc.Init(hr.channelName, hr.userScore.ToString(), hr.nbQuestion.ToString(), hr.date);
+			}
+
 			_cases.Add(hc);
 		}
 	}

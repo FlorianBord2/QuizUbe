@@ -5,10 +5,21 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System.IO;
 using Newtonsoft.Json;
+using System;
+
+public class PendingChallengesData
+{
+	public string channelName;
+	public string channelUrl;
+	public string fromId;
+	public string fromName;
+	public string quiz_uuid;
+}
 
 public class FriendsPage : Page
 {
 	public FriendBar FriendBarPrefab;
+	public HistoCase HistoCasePrefab;
 
 	public InputField AddFriendInputField;
 	public Transform FriendsListRoot;
@@ -22,10 +33,13 @@ public class FriendsPage : Page
 	private const string ADD_FRIEND_URL = @"http://127.0.0.1:65000/users/add_friend";
 	private const string GET_PENDING_REQUEST_URL = @"http://127.0.0.1:65000/users/get_pending_list";
 	private const string GET_FRIENDS_URL = @"http://127.0.0.1:65000/users/friend_list";
+	private const string GET_CHALLENGES_URL = @"http://127.0.0.1:65000/quiz/get_defis_list";
+	private const string ACCEPT_CHALLENGE_URL = @"http://127.0.0.1:65000/quiz/get_defis_quiz";
 
 	private List<FriendBar> _pendingRequests;
 	private List<FriendBar> _friends;
 
+	private List<HistoCase> _pendingChallenges;
 
 	public void OnAddFriendButtonClicked()
 	{
@@ -52,10 +66,61 @@ public class FriendsPage : Page
 	public override void Open(string value)
 	{
 		gameObject.SetActive(true);
+		_onFriendsList = true;
+
+		RefreshStuff();
 
 		RefreshRequestsList();
-
 		RefreshFriendList();
+
+		RefreshChallengeList();
+	}
+
+	private void RefreshChallengeList()
+	{
+		if (_pendingChallenges == null)
+		{
+			_pendingChallenges = new List<HistoCase>();
+		}
+
+		foreach (HistoCase hc in _pendingChallenges)
+		{
+			Destroy(hc.gameObject);
+		}
+		_pendingChallenges.Clear();
+
+		string pendingResponse = WebUtility.Instance.Get(GET_CHALLENGES_URL, ("userLocalId", Program.LoginData.localId));
+		IEnumerable<PendingChallengesData> pendingRequests = new List<PendingChallengesData>();
+		try
+		{
+			StringReader reader = new StringReader(pendingResponse);
+			JsonSerializer ser = JsonSerializer.Create(new JsonSerializerSettings());
+			pendingRequests = (IEnumerable<PendingChallengesData>)ser.Deserialize(reader, typeof(IEnumerable<PendingChallengesData>));
+
+			foreach (PendingChallengesData pr in pendingRequests)
+			{
+				HistoCase fb = Instantiate(HistoCasePrefab, ChallengesList.transform);
+				fb.Init(pr.channelName, "", "", "", pr.fromName, true, true);
+				fb.OnClicked += () => AcceptChallenge(pr.fromId, pr.quiz_uuid);
+				(fb.transform as RectTransform).sizeDelta = new Vector2(848f, (fb.transform as RectTransform).sizeDelta.y);
+				_pendingChallenges.Add(fb);
+			}
+		}
+		catch
+		{
+		}
+	}
+
+	private void AcceptChallenge(string from, string uuid)
+	{
+		string result = WebUtility.Instance.Get(ACCEPT_CHALLENGE_URL, ("fromId", from), ("uuid", uuid));
+
+		StringReader reader = new StringReader(result);
+		JsonSerializer ser = JsonSerializer.Create(new JsonSerializerSettings());
+		QuizHistoResponse histoResponse = (QuizHistoResponse)ser.Deserialize(reader, typeof(QuizHistoResponse));
+
+		Close();
+		(Program.QuizPage as QuizPage).OpenAndInitWithQuizHisto(histoResponse);
 	}
 
 	private void RefreshRequestsList()
@@ -87,7 +152,7 @@ public class FriendsPage : Page
 		{
 			FriendBar fb = Instantiate(FriendBarPrefab, FriendsListRoot);
 			fb.transform.SetSiblingIndex(PENDING_REQUEST_SIBLING_INDEX + 1);
-			fb.Init(pr.name, true);
+			fb.Init(pr.name, pr.userIdToken, true);
 			fb.OnInteractionBtnClicked += Fb_OnInteractionBtnClicked;
 			_pendingRequests.Add(fb);
 		}
@@ -122,9 +187,16 @@ public class FriendsPage : Page
 		{
 			FriendBar fb = Instantiate(FriendBarPrefab, FriendsListRoot);
 			fb.transform.SetSiblingIndex(FriendsRequestSiblingIndex + 1);
-			fb.Init(pr.name, false);
+			fb.Init(pr.name, pr.userIdToken, false);
+			fb.OnChallengeBtnClicked += Fb_OnChallengeBtnClicked;
 			_friends.Add(fb);
 		}
+	}
+
+	private void Fb_OnChallengeBtnClicked(string name, string userIdToken)
+	{
+		Close();
+		Program.SearchPage.Open($"{name},{userIdToken}");
 	}
 
 	private void Fb_OnInteractionBtnClicked(bool accepted)
@@ -137,5 +209,23 @@ public class FriendsPage : Page
 	{
 		Close();
 		Program.MainPage.Open(null);
+	}
+
+	private bool _onFriendsList = true;
+
+	public void SwapTabs()
+	{
+		_onFriendsList = !_onFriendsList;
+		RefreshStuff();
+	}
+
+	public Text TabTitle;
+	public GameObject FriendsList;
+	public GameObject ChallengesList;
+	private void RefreshStuff()
+	{
+		FriendsList.SetActive(_onFriendsList);
+		ChallengesList.SetActive(!_onFriendsList);
+		TabTitle.text = _onFriendsList ? "Friends List" : "Challenges";
 	}
 }
