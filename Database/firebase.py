@@ -158,7 +158,7 @@ class Firebase:
             'time': data['time'],
             'uuid': data['uuid'],
             'userScore':data['userScore'],
-            'nbQuestion': data['nbQuestion'],
+            'nbQuestion': int(data['nbQuestion']),
             'defis':False
             }
         self.db.child(data['userLocalId']).child('quizHisto').push(quiz_histo)
@@ -228,7 +228,7 @@ class Firebase:
             'uuid': data['uuid'],
             'userScore':data['userScore'],
             'userScore2':"None",
-            'nbQuestion': data['nbQuestion'],
+            'nbQuestion': int(data['nbQuestion']),
             'defis':True,
             'from':userLocalId,
             'fromName': self.findName(userLocalId),
