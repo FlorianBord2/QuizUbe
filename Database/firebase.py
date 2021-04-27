@@ -227,7 +227,7 @@ class Firebase:
             'time': data['time'],
             'uuid': data['uuid'],
             'userScore':data['userScore'],
-            'userScore2':"None",
+            'userScore2':-1,
             'nbQuestion': int(data['nbQuestion']),
             'defis':True,
             'from':userLocalId,
