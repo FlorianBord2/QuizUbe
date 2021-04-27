@@ -167,7 +167,7 @@ class Firebase:
         self.saveStats(data['userLocalId'], data['userScore'])
 
     def saveStats(self, userLocalId, userScore):
-        
+        username = self.findName(userLocalId)
         score = self.db.child("score").child(username).get().val()
         if score == None:
             self.db.child("score").child(username).set(userScore)
@@ -238,6 +238,8 @@ class Firebase:
             }
         self.db.child(userLocalId).child('quizHisto').child(data['uuid']).set(quiz_histo)
         self.db.child(userLocalId).child('quiz').child(data['uuid']).set(data['quiz'])
+        #stats
+        self.saveStats(data['userLocalId'], data['userScore'])
         return json.dumps("ok")
     
     def get_defis(self, userLocalId):
@@ -272,6 +274,7 @@ class Firebase:
         self.db.child(histo['from']).child('quizHisto').child(histo['uuid']).update(histo)
         #save le quiz avec metadata chez userLocalId
         self.db.child(userLocalId).child('quizHisto').child(histo['uuid']).set(histo)
+        self.saveStats(userLocalId, histo['userScore2'])
         #save l'histo chez userlocalId
         self.db.child(userLocalId).child('quiz').child(histo['uuid']).set(quiz)
         #remove le quiz des pending
