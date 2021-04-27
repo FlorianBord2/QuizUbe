@@ -242,6 +242,8 @@ class Firebase:
         pending = self.db.child(userLocalId).child('pendingDefis').get().val()
         res  = []
         ##ADD ERROR CASE NO PE?DING
+        if pending == None:
+            return json.dumps('[]')
         for each in pending:
             print(each)
             res.append(pending[each])

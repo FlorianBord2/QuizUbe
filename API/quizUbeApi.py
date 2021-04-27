@@ -134,7 +134,7 @@ def register():
             print(res)
             f.db.child("users").child(username).set(res['localId'])
         except:
-            return res
+            return 'Error'
         return res
     else:
         return 'Wrong method'
